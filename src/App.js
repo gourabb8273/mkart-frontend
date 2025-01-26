@@ -2,8 +2,8 @@ import React, { useState ,useEffect} from 'react';
 import './App.css';
 import { useAuth0 } from '@auth0/auth0-react';
 import { Navbar, Nav, Container, Dropdown, Modal, Button, Form } from 'react-bootstrap';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import { FaUserCircle } from 'react-icons/fa';  // Profile icon from react-icons
+import 'bootstrap/dist/css/bootstrap.min.css'; 
+import { FaUserCircle } from 'react-icons/fa'; 
 import { ToastContainer } from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux'
 
