@@ -48,7 +48,7 @@ jobs:
       - name: Register Task Definition
         run: |
           aws ecs register-task-definition \
-            --cli-input-json file://./task-def.json \
+            --cli-input-json file://src/task-def.json \
             --region ap-south-1
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
