@@ -21,7 +21,8 @@ root.render(
     cacheLocation="localstorage"
     authorizationParams={{
       redirect_uri: 
-      window.location.origin
+      'https://google.com/'
+      // window.location.origin
     }}
   >
     <App />
