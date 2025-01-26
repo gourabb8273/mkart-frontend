@@ -1,0 +1,42 @@
+{
+    "family": "customer-frontend",
+    "containerDefinitions": [
+      {
+        "name": "customer-frontend",
+        "image": "<IMAGE_URI>",
+        "cpu": 512,
+        "memory": 512,
+        "essential": true,
+        "portMappings": [
+          {
+            "containerPort": 5000,
+            "hostPort": 5000,
+            "protocol": "tcp"
+          }
+        ],
+        "logConfiguration": {
+          "logDriver": "awslogs",
+          "options": {
+            "awslogs-group": "/ecs/customer-frontend",
+            "awslogs-region": "ap-south-1",
+            "awslogs-stream-prefix": "customer-frontend"
+          }
+        },
+        "secrets": [
+          {
+            "name": "JWT_SECRET",
+            "valueFrom": "arn:aws:secretsmanager:ap-south-1:980921736494:secret:JWT_SECRET-5AXt1a"
+          },
+          {
+            "name": "SESSION_SECRET",
+            "valueFrom": "arn:aws:secretsmanager:ap-south-1:980921736494:secret:SESSION_SECRET-fXj26a"
+          }
+        ]
+  
+      }
+    ],
+    "networkMode": "bridge",
+    "requiresCompatibilities": ["EC2"],
+    "executionRoleArn": "arn:aws:iam::980921736494:role/ecsTaskExecutionRole",
+    "taskRoleArn": "arn:aws:iam::980921736494:role/ecsTaskExecutionRole"
+  }
