@@ -98,7 +98,7 @@ jobs:
               --load-balancers '[{
                 "targetGroupArn": "arn:aws:elasticloadbalancing:ap-south-1:980921736494:targetgroup/ecs-tg/37c661d494e4ce68",
                 "containerName": "customer-frontend",
-                "containerPort": 3000
+                "containerPort": 5000
               }]' \
               --region ap-south-1 \
               --health-check-grace-period-seconds 60
