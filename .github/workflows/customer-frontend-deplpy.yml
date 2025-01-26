@@ -28,7 +28,7 @@ jobs:
  
       - name: Build and Push User Service Image
         run: |
-          IMAGE_URI="${{ secrets.ECR_URI }}/customer-frontend:latest"
+          IMAGE_URI="${{ secrets.ECR_URI }}:latest"
           docker build -t $IMAGE_URI .
           docker push $IMAGE_URI
  
