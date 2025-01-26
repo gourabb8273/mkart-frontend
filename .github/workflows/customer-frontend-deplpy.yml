@@ -34,7 +34,7 @@ jobs:
  
       - name: Update Task Definition
         run: |
-          sed -i 's#<IMAGE_URI>#${{ secrets.ECR_URI }}:latest#g' ./customer-frontend/task-def.json
+          sed -i 's#<IMAGE_URI>#${{ secrets.ECR_URI }}:latest#g' ./src/task-def.json
  
       - name: Attach CloudWatch Logs Permissions to Task Execution Role
         run: |
