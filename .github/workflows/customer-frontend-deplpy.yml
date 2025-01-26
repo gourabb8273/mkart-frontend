@@ -111,7 +111,7 @@ jobs:
       - name: Deploy to ECS
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
-          task-definition: ./customer-frontend/task-def.json
+          task-definition: ./src/task-def.json
           service: customer-frontend
           cluster: my-microservices
           wait-for-service-stability: true
