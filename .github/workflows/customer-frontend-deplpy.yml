@@ -3,7 +3,7 @@ name: Deploy Customer Frontend Service
 on:
   push:
     paths:
-      - "./**"   # 
+      - "**"   # 
  
 jobs:
   build-and-deploy:
