@@ -1,28 +1,34 @@
-// src/slices/userSlice.js
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  user: null, // Holds user profile information
-  auth0Id: null, // Stores the auth0Id
-  isLoggedIn: false, // Indicates whether user is logged in or not
+  auth0Id: null,
+  isLoggedIn: false,
   error: null,
-  status: 'idle', // Idle or Loading state for managing async requests
+  status: "idle",
+  profile: null,
+  watchlist: [],
+  watchlistStatus: "idle",
+  watchlistError: null,
 };
 
 const userSlice = createSlice({
-  name: 'user',
+  name: "user",
   initialState,
   reducers: {
-    setUserProfile: (state, action) => {
+    setUser: (state, action) => {
       const { auth0Id, isLoggedIn, profile } = action.payload;
-      state.profile = profile; // Save user profile information
-      state.auth0Id = auth0Id; // Save the auth0Id
-      state.isLoggedIn = isLoggedIn; // Set the login flag
+      state.profile = profile;
+      state.auth0Id = auth0Id;
+      state.isLoggedIn = isLoggedIn;
+    },
+    setUserProfile: (state, action) => {
+      state.profile = action.payload;
     },
     logoutUser: (state) => {
       state.profile = null;
       state.auth0Id = null;
       state.isLoggedIn = false;
+      state.watchlist = [];
     },
     setError: (state, action) => {
       state.error = action.payload;
@@ -30,9 +36,37 @@ const userSlice = createSlice({
     setStatus: (state, action) => {
       state.status = action.payload;
     },
+    setWatchlist: (state, action) => {
+      state.watchlist = action.payload;
+    },
+    addWatchlistItem: (state, action) => {
+      state.watchlist.push(action.payload);
+    },
+    removeWatchlistItem: (state, action) => {
+      state.watchlist = state.watchlist.filter(
+        (item) => item.productId !== action.payload.productId
+      );
+    },
+    setWatchlistStatus: (state, action) => {
+      state.watchlistStatus = action.payload;
+    },
+    setWatchlistError: (state, action) => {
+      state.watchlistError = action.payload;
+    },
   },
 });
 
-export const { setUserProfile, logoutUser, setError, setStatus } = userSlice.actions;
+export const {
+  setUser,
+  setUserProfile,
+  logoutUser,
+  setError,
+  setStatus,
+  setWatchlist,
+  addWatchlistItem,
+  removeWatchlistItem,
+  setWatchlistStatus,
+  setWatchlistError,
+} = userSlice.actions;
 
 export default userSlice.reducer;

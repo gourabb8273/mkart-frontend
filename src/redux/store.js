@@ -1,27 +1,35 @@
-// src/redux/store.js
-import { configureStore } from "@reduxjs/toolkit";
-import { combineReducers } from "redux";
-import reduxLogger from "redux-logger";
-import { createStateSyncMiddleware, initMessageListener } from "redux-state-sync";
+import { configureStore, combineReducers } from "@reduxjs/toolkit";
+import storage from "redux-persist/lib/storage"; 
+import { persistStore, persistReducer } from "redux-persist";
+import { initMessageListener } from "redux-state-sync";
 
 import userReducer from "./slices/userSlice";
+import productReducer from "./slices/productSlice";
 
-const reduxStateSyncConfig = {};
+// Configure Redux Persist
+const persistConfig = {
+  key: "root", // Key for storage
+  storage, // Storage engine (localStorage)
+  whitelist: ["user", "products"], // Persist these reducers
+};
 
-const reducer = combineReducers({
+const rootReducer = combineReducers({
   user: userReducer,
+  products: productReducer,
 });
 
-// const middlewares = [
-//   createStateSyncMiddleware(reduxStateSyncConfig),
-//   reduxLogger,
-// ];
+// Persisted reducer
+const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 const store = configureStore({
-  reducer,
-//   middleware: [...middlewares],
+  reducer: persistedReducer,
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: false, 
+    }),
 });
 
 initMessageListener(store);
 
+export const persistor = persistStore(store); 
 export default store;

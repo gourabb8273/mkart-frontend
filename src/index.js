@@ -15,14 +15,14 @@ root.render(
   <React.StrictMode>
      <Provider store={store}>
     <Auth0Provider
-    domain="dev-13meemmp8wticu8u.us.auth0.com"
-    clientId="3Rzs8M5Hbr8uRpGb4oDHEkpRK4x2f81v"
+    domain={process.env.REACT_APP_AUTH0_DOMAIN}
+    clientId={process.env.REACT_APP_AUTH0_CLIENT_ID}
     useRefreshTokens={true}
     cacheLocation="localstorage"
     authorizationParams={{
       redirect_uri: 
-      'https://google.com/'
-      // window.location.origin
+      // 'https://google.com/'
+      window.location.origin
     }}
   >
     <App />
