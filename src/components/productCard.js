@@ -17,7 +17,9 @@ import {
   setWatchlistStatus,
   setWatchlistError,
 } from "../redux/slices/userSlice";
+import { addToCart, updateQuantity } from "../redux/slices/cartSlice";
 import { showNotification } from "./notification";
+import { addItemToCart } from "../redux/services/cartAPI";
 
 const API_BASE_URL = process.env.REACT_APP_USER_SERVICE_API_BASE_URL;
 
@@ -25,20 +27,25 @@ const ProductCard = ({ product }) => {
   const history = useHistory();
   const dispatch = useDispatch();
   const profile = useSelector((state) => state.user.profile) || {};
-  const { _id } = profile;
+  const { _id: userId } = profile;
   const watchlist = useSelector((state) => state.user?.watchlist) || [];
+  const cartItems = useSelector((state) => state.cart.items) || [];
+
   const isInWishlist = watchlist.some((item) => item.productId === product._id);
+
+  const cartItem = cartItems.find((item) => item.productId === product._id);
+  const quantityInCart = cartItem?.quantity || 0;
 
   const handleWishlistClick = async (e) => {
     e.stopPropagation();
-    if (!_id) return;
+    if (!userId) return;
 
     const action = isInWishlist
       ? axios.delete(`${API_BASE_URL}/wishlist/remove`, {
-          data: { userId: _id, productId: product._id },
+          data: { userId, productId: product._id },
         })
       : axios.post(`${API_BASE_URL}/wishlist/add`, {
-          userId: _id,
+          userId,
           productId: product._id,
         });
 
@@ -72,12 +79,39 @@ const ProductCard = ({ product }) => {
     }
   };
 
+  const handleAddToCart = async (e) => {
+    e.stopPropagation();
+    if (!userId) return;
+
+    const newQuantity = quantityInCart + 1;
+
+    try {
+      await addItemToCart({
+        userId,
+        productId: product._id,
+        quantity: newQuantity,
+      });
+
+      if (quantityInCart === 0) {
+        dispatch(addToCart({ productId: product._id, quantity: 1 }));
+      } else {
+        dispatch(
+          updateQuantity({ productId: product._id, quantity: newQuantity })
+        );
+      }
+
+      showNotification("Item added to cart", "success");
+    } catch (error) {
+      console.error("Error adding to cart", error);
+      showNotification("Failed to add to cart", "error");
+    }
+  };
+
   const rank1Image =
     product.images?.find((image) => image.rank === 1)?.url || "";
 
   return (
     <>
-      {/* Media query to force five cards per row on extra-large screens */}
       <style>{`
         @media (min-width: 1200px) {
           .product-col {
@@ -86,13 +120,7 @@ const ProductCard = ({ product }) => {
           }
         }
       `}</style>
-      <Col
-        xs={12}
-        sm={6}
-        md={4}
-        lg={3}
-        className="mb-3 px-2 product-col"
-      >
+      <Col xs={12} sm={6} md={4} lg={3} className="mb-3 px-2 product-col">
         <Card
           onClick={handleCardClick}
           className="h-100 d-flex flex-column"
@@ -107,7 +135,7 @@ const ProductCard = ({ product }) => {
             style={{
               position: "relative",
               width: "100%",
-              paddingTop: "100%", // Maintains a square image ratio
+              paddingTop: "100%",
               backgroundColor: "#f8f9fa",
             }}
           >
@@ -212,7 +240,7 @@ const ProductCard = ({ product }) => {
                 size={18}
                 onClick={handleWishlistClick}
                 style={{
-                  cursor: _id ? "pointer" : "not-allowed",
+                  cursor: userId ? "pointer" : "not-allowed",
                   color: isInWishlist ? "#ff4444" : "#ccc",
                   minWidth: "24px",
                 }}
@@ -251,7 +279,7 @@ const ProductCard = ({ product }) => {
             <OverlayTrigger
               overlay={
                 <Tooltip>
-                  {product.stock === 0 ? "Out of stock" : "Add to Cart"}
+                  {product.stock === 0 ? "Out of stock" : "Click to add again"}
                 </Tooltip>
               }
             >
@@ -259,7 +287,8 @@ const ProductCard = ({ product }) => {
                 variant="primary"
                 className="w-100 mb-2"
                 size="sm"
-                disabled={product.stock === 0 || !_id}
+                onClick={handleAddToCart}
+                disabled={product.stock === 0 || !userId}
                 style={{
                   borderRadius: "4px",
                   background: "#ff9f00",
@@ -273,7 +302,11 @@ const ProductCard = ({ product }) => {
                 }}
               >
                 <FaShoppingCart size={14} />
-                {product.stock === 0 ? "Out of Stock" : "Add to Cart"}
+                {product.stock === 0
+                  ? "Out of Stock"
+                  : quantityInCart > 0
+                  ? `In Cart (${quantityInCart})`
+                  : "Add to Cart"}
               </Button>
             </OverlayTrigger>
 

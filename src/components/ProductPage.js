@@ -3,33 +3,65 @@ import { Container, Row, Col, Form, Button } from 'react-bootstrap';
 import { FaShoppingCart, FaHeart, FaFilter } from 'react-icons/fa';
 import { useDispatch, useSelector } from 'react-redux';
 import { setProducts, setError, setStatus } from '../redux/slices/productSlice';
+import { setCartItems } from '../redux/slices/cartSlice';
 import axios from 'axios';
 import ProductCard from './productCard';
 import { getWatchlistData } from '../redux/services/watchlistAPI';
+import { getCartItems } from '../redux/services/cartAPI';
+import { useHistory } from 'react-router-dom';
+
 
 const API_BASE_URL = process.env.REACT_APP_PRODUCT_CATELOG_API_BASE_URL;
 
 function ProductPage() {
+const history = useHistory();
+
+const handleCartClick = () => {
+  history.push('/cart');
+};
   const dispatch = useDispatch();
   const { products, status, error } = useSelector((state) => state.products);
+  const cart = useSelector((state) => state.cart.items);
+  const profile = useSelector((state) => state.user.profile) || {};
+  const watchlist = useSelector((state) => state.user.watchlist) || [];
+  const { _id } = profile;
+console.log(profile)
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [filterType, setFilterType] = useState('All');
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [wishlistCount, setWishlistCount] = useState(0);
+  const [cartCount, setCartCount] = useState(0);
   const [showWishlistOnly, setShowWishlistOnly] = useState(false);
-  const profile = useSelector((state) => state.user.profile) || {};
-  const { _id } = profile;
-  const watchlist = useSelector((state) => state.user.watchlist) || [];
 
+  // Fetch watchlist
   useEffect(() => {
     if (_id) dispatch(getWatchlistData(_id));
   }, [_id, dispatch]);
 
   useEffect(() => {
     setWishlistCount(watchlist.length);
-  }, [watchlist]);
+  }, [watchlist]);  
 
+  useEffect(() => {
+    const fetchCart = async () => {
+      if (_id) {
+        try {
+          const cartData = await getCartItems(_id);
+          dispatch(setCartItems(cartData));
+        } catch (err) {
+          console.error("Failed to load cart data");
+        }
+      }
+    };
+    fetchCart();
+  }, [_id, dispatch]);
+
+  useEffect(() => {
+    setCartCount(cart.length);
+  }, [cart]);
+
+  // Fetch products
   useEffect(() => {
     const fetchProducts = async () => {
       dispatch(setStatus("loading"));
@@ -46,9 +78,11 @@ function ProductPage() {
         dispatch(setError("Failed to fetch products"));
       }
     };
+
     const debounceHandler = setTimeout(() => {
       if (!showWishlistOnly) fetchProducts();
     }, 200);
+
     return () => clearTimeout(debounceHandler);
   }, [dispatch, filterType, selectedCategory, searchTerm, showWishlistOnly]);
 
@@ -130,9 +164,9 @@ function ProductPage() {
             <FaHeart size={20} className="me-2" />
             <span className="fw-medium">Wishlist ({wishlistCount})</span>
           </div>
-          <div className="d-flex align-items-center" style={{ color: '#2c3e50' }}>
+          <div className="d-flex align-items-center" style={{ color: '#2c3e50' }} onClick={handleCartClick}>
             <FaShoppingCart size={20} className="me-2" />
-            <span className="fw-medium">Cart (0)</span>
+            <span className="fw-medium">Cart ({cartCount})</span>
           </div>
         </Col>
       </Row>

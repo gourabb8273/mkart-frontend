@@ -19,7 +19,7 @@ function CustomNavbar({ user, isAuthenticated, handleLogout, showModal, setShowM
         <Navbar.Brand href="#home" className="fs-6 text-light">{BRAND_NAME}</Navbar.Brand>
 
         <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="me-auto">{!isAuthenticated && <LoginButton />}</Nav>
+          <Nav className="ms-auto">{!isAuthenticated && <LoginButton />}</Nav>
         </Navbar.Collapse>
 
         {isAuthenticated && (

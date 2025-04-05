@@ -8,6 +8,7 @@ import { saveUserData } from "./redux/services/userAPI";
 import Navbar from "./components/Navbar";
 import FeaturePage from "./components/ProductPage";
 import ProductPage from "./pages/productDetails"; 
+import CartPage from "./components/CartPage"; // ✅ Import CartPage
 import UserProfileModal from "./components/userProfileModal";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { logoutUser } from "./redux/slices/userSlice";
@@ -88,6 +89,7 @@ function App() {
         <Switch>
           <Route exact path="/" component={FeaturePage} />
           <Route path="/product/:id" component={ProductPage} />
+          <Route path="/cart" component={CartPage} /> 
         </Switch>
       </div>
     </Router>
