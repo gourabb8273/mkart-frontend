@@ -49,13 +49,35 @@ export const saveUserData = (userDetails) => async (dispatch) => {
 export const updateUserData = (profileData) => async (dispatch) => {
   dispatch(setStatus("loading"));
   try {
-    await axios.patch(`${API_BASE_URL}/update`, profileData);
+    await axios.patch(`${API_BASE_URL}/update`, profileData);    
     dispatch(setUserProfile(profileData));
     dispatch(setStatus("succeeded"));
     showNotification("User profile updated successfully!", "success");
   } catch (error) {
     dispatch(
       setError(error.response?.data?.message || "Failed to update user data")
+    );
+    dispatch(setStatus("failed"));
+  }
+};
+
+export const fetchUserData = (id) => async (dispatch) => {
+  dispatch(setStatus("loading"));
+  try {
+    const response = await axios.get(`${API_BASE_URL}`, {
+      params: { userId: id },
+    });
+    const matchedUser = response.data?.data;
+    debugger
+    if (matchedUser) {
+      dispatch(setUserProfile(matchedUser));
+      dispatch(setStatus("succeeded"));
+    } else {
+      throw new Error("User not found");
+    }
+  } catch (error) {
+    dispatch(
+      setError(error.response?.data?.message || "Failed to fetch user data")
     );
     dispatch(setStatus("failed"));
   }

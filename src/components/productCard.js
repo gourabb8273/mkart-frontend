@@ -291,9 +291,11 @@ const ProductCard = ({ product }) => {
                 disabled={product.stock === 0 || !userId}
                 style={{
                   borderRadius: "4px",
-                  background: "#ff9f00",
+                  background: '#198754',
+                  // "#ff9f00",
                   border: "none",
-                  color: "#000",
+                  color: 'white',
+                  // "#000",
                   fontWeight: "500",
                   display: "flex",
                   alignItems: "center",

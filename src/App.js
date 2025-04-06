@@ -12,6 +12,7 @@ import CartPage from "./components/CartPage"; // ✅ Import CartPage
 import UserProfileModal from "./components/userProfileModal";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { logoutUser } from "./redux/slices/userSlice";
+import OrderHistoryPage from "./components/OrderHistoryPage";
 
 function App() {
   const { user, isAuthenticated, logout } = useAuth0();
@@ -65,6 +66,7 @@ function App() {
   const handleLogout = () => {
     dispatch(logoutUser());
     purgeUserPersistedState();
+    localStorage.clear();
     logout({ returnTo: window.location.origin });
   };
 
@@ -90,6 +92,7 @@ function App() {
           <Route exact path="/" component={FeaturePage} />
           <Route path="/product/:id" component={ProductPage} />
           <Route path="/cart" component={CartPage} /> 
+          <Route path="/orders" component={OrderHistoryPage} /> 
         </Switch>
       </div>
     </Router>

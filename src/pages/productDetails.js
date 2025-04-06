@@ -4,6 +4,10 @@ import { useHistory, useParams } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import Zoom from 'react-medium-image-zoom';
 import 'react-medium-image-zoom/dist/styles.css';
+import { FaArrowLeft } from "react-icons/fa";
+import { Box, IconButton, Typography } from "@mui/material";
+import { ArrowLeft } from "lucide-react"; 
+
 
 const ProductPage = () => {
   const { id } = useParams();
@@ -21,10 +25,22 @@ const ProductPage = () => {
   return (
     <Container fluid className="py-4" style={{ backgroundColor: '#fff', minHeight: '100vh' }}>
       <Row>
-        <Col className="text-start ps-5">
-          <Button variant="secondary" onClick={() => history.push('/')} className="mb-4">← Back to Home</Button>
-        </Col>
-      </Row>
+      <Box sx={{ display: "flex", alignItems: "center", mb: 4, gap: 2 }}>
+      <IconButton
+        onClick={() => history.push("/")}
+        sx={{ display: { xs: "none", sm: "flex" } }}
+      >
+        <ArrowLeft size={20} /> 
+      </IconButton>
+      <Typography
+        variant="h4"
+        component="h1"
+        sx={{ fontSize: { xs: "0.5rem", sm: "1.5rem" }, fontWeight: 400 }}
+      >
+        Product Details
+      </Typography>
+    </Box>
+</Row>
       {product ? (
         <Row className="w-75 mx-auto">
           <Col md={6} className="d-flex flex-column align-items-center">

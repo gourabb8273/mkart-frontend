@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from "axios";
 
 const API_BASE_URL = process.env.REACT_APP_PRODUCT_CART_API_BASE_URL;
 
@@ -26,7 +26,11 @@ export const addItemToCart = async ({ userId, productId, quantity }) => {
   }
 };
 
-export const updateCartItemQuantity = async ({ userId, productId, quantity }) => {
+export const updateCartItemQuantity = async ({
+  userId,
+  productId,
+  quantity,
+}) => {
   try {
     const response = await axios.put(`${API_BASE_URL}/cart`, {
       userId,
@@ -41,8 +45,18 @@ export const updateCartItemQuantity = async ({ userId, productId, quantity }) =>
 };
 
 export const removeCartItem = ({ userId, productId }) =>
-    axios.delete(`${API_BASE_URL}/cart`, {
-      data: { userId, productId },
-    });
+  axios.delete(`${API_BASE_URL}/cart`, {
+    data: { userId, productId },
+  });
 
-  
+export const markCartItemsAsOrdered = async (cartIds) => {
+  try {
+    const response = await axios.patch(`${API_BASE_URL}/cart/markAsOrdered`, {
+      cartIds,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error marking cart items as ordered:", error);
+    throw error;
+  }
+};

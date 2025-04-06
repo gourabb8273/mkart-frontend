@@ -10,11 +10,13 @@ const MENU_ITEMS = {
   PROFILE: "My Profile",
   LOGOUT: "Logout",
   WELCOME: "Welcome,",
+  ORDERS: "Orders History"
 };
 
 function CustomNavbar({ user, isAuthenticated, handleLogout, showModal, setShowModal }) {
   return (
-    <Navbar expand="lg" className="py-0" style={{ backgroundColor: '#0d6efd' }}>
+    <Navbar expand="lg" className="py-0" style={{ backgroundColor: '#198754' }}> 
+    {/* '#0d6efd' */}
       <Container fluid>
         <Navbar.Brand href="#home" className="fs-6 text-light">{BRAND_NAME}</Navbar.Brand>
 
@@ -33,8 +35,11 @@ function CustomNavbar({ user, isAuthenticated, handleLogout, showModal, setShowM
               </Dropdown.Toggle>
               <Dropdown.Menu className="dropdown-menu-end">
                 <Dropdown.Item onClick={() => setShowModal(true)}>{MENU_ITEMS.PROFILE}</Dropdown.Item>
+                <Dropdown.Item onClick={() => window.location.href = "/orders"}>{MENU_ITEMS.ORDERS}</Dropdown.Item>
                 <Dropdown.Item onClick={handleLogout}>{MENU_ITEMS.LOGOUT}</Dropdown.Item>
+               
               </Dropdown.Menu>
+              
             </Dropdown>
           </div>
         )}
