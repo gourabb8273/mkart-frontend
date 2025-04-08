@@ -27,15 +27,13 @@ function UserProfileModal({ show, handleClose }) {
     }
   });
   useEffect(() => {
-    if (user?.profile?._id) {
-      debugger
+    if (user?.profile?._id) {      
       dispatch(fetchUserData(user.profile._id));
     }
   }, [dispatch, user?.profile?._id]);
   
   useEffect(() => {
     if (profile) {
-      debugger
       setFormData({
         name: profile.name || '',
         email: profile.email || '',

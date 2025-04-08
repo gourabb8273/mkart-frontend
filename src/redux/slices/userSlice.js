@@ -22,7 +22,6 @@ const userSlice = createSlice({
       state.isLoggedIn = isLoggedIn;
     },
     setUserProfile: (state, action) => {
-      debugger
       state.profile = action.payload;
     },
     logoutUser: (state) => {

@@ -97,7 +97,7 @@ function CartPage() {
   
       showNotification("Order placed successfully", "success");
       setShowPaymentModal(false);
-      history.push('/');
+      history.push('/orders');
     } catch (error) {
       console.error("Error placing order:", error);
       showNotification("Failed to place order", "error");

@@ -1,18 +1,25 @@
-import React, { useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { Modal, Button, Form, Row, Col } from 'react-bootstrap';
-import { CreditCard, Truck, GeoAlt, CalendarCheck } from 'react-bootstrap-icons';
+import React, { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { Modal, Button, Form, Row, Col } from "react-bootstrap";
+import {
+  CreditCard,
+  Truck,
+  GeoAlt,
+  CalendarCheck,
+} from "react-bootstrap-icons";
 
 const PaymentModal = ({ show, handleClose, onConfirm, totalAmount }) => {
-  const [paymentMode, setPaymentMode] = useState('UPI');
-  const shippingAddress = useSelector((state) => state.user.profile?.shippingAddress || {});
+  const [paymentMode, setPaymentMode] = useState("UPI");
+  const shippingAddress = useSelector(
+    (state) => state.user.profile?.shippingAddress || {}
+  );
   const staticAddress = {
     line1: "123 Main St",
     line2: "Apt 4B",
     city: "Mumbai",
     state: "Maharashtra",
     zip: "400001",
-    country: "India"
+    country: "India",
   };
 
   const estimatedDeliveryDate = new Date();
@@ -34,10 +41,14 @@ const PaymentModal = ({ show, handleClose, onConfirm, totalAmount }) => {
         </Modal.Title>
       </Modal.Header>
       <Modal.Body className="px-4">
-        <h5 className="text-center mb-4">Total Amount: <strong>${totalAmount.toFixed(2)}</strong></h5>
+        <h5 className="text-center mb-4">
+          Total Amount: <strong>${totalAmount.toFixed(2)}</strong>
+        </h5>
         <Form>
           <Form.Group controlId="paymentMode" className="mb-4">
-            <Form.Label className="fw-semibold">Select Payment Mode:</Form.Label>
+            <Form.Label className="fw-semibold">
+              Select Payment Mode:
+            </Form.Label>
             <div className="d-flex flex-wrap gap-3">
               <Form.Check
                 type="radio"
@@ -45,7 +56,7 @@ const PaymentModal = ({ show, handleClose, onConfirm, totalAmount }) => {
                 id="upi"
                 value="UPI"
                 label={<span>UPI</span>}
-                checked={paymentMode === 'UPI'}
+                checked={paymentMode === "UPI"}
                 onChange={handlePaymentModeChange}
               />
               <Form.Check
@@ -54,7 +65,7 @@ const PaymentModal = ({ show, handleClose, onConfirm, totalAmount }) => {
                 id="card"
                 value="Card"
                 label={<span>Card</span>}
-                checked={paymentMode === 'Card'}
+                checked={paymentMode === "Card"}
                 onChange={handlePaymentModeChange}
               />
               <Form.Check
@@ -63,12 +74,13 @@ const PaymentModal = ({ show, handleClose, onConfirm, totalAmount }) => {
                 id="cod"
                 value="Cash on Delivery"
                 label={<span>Cash on Delivery</span>}
-                checked={paymentMode === 'Cash on Delivery'}
+                checked={paymentMode === "Cash on Delivery"}
                 onChange={handlePaymentModeChange}
               />
             </div>
             <small className="text-muted d-block mt-2 ms-1">
-              <CreditCard className="me-1" /> Payment will be securely handled via Stripe gateway.
+              <CreditCard className="me-1" /> Payment will be securely handled
+              via Stripe gateway.
             </small>
           </Form.Group>
 
@@ -77,19 +89,26 @@ const PaymentModal = ({ show, handleClose, onConfirm, totalAmount }) => {
               <GeoAlt className="me-1 mb-1" /> Shipping Address:
             </Form.Label>
             <div className="border rounded p-3 bg-light">
-            <Form.Group className="mb-4">
-  <Form.Label className="fw-semibold">
-    <GeoAlt className="me-1 mb-1" /> Shipping Address:
-  </Form.Label>
-  <div className="border rounded p-3 bg-light">
-  {[shippingAddress.line1, shippingAddress.line2].filter(Boolean).join(', ')}<br />
-    {[shippingAddress.city, shippingAddress.state, shippingAddress.zip].filter(Boolean).join(', ')}<br />
-    {shippingAddress.country}
-    {/* {[shippingAddress.line1, shippingAddress.line2].filter(Boolean).join(', ')}<br />
-    {[shippingAddress.city, shippingAddress.state, shippingAddress.zip].filter(Boolean).join(', ')}<br />
-    {shippingAddress.country} */}
-  </div>
-</Form.Group>
+              <Form.Group className="mb-4">
+                <Form.Label className="fw-semibold">
+                  <GeoAlt className="me-1 mb-1" /> Shipping Address:
+                </Form.Label>
+                <div className="border rounded p-3 bg-light">
+                  {[shippingAddress.line1, shippingAddress.line2]
+                    .filter(Boolean)
+                    .join(", ")}
+                  <br />
+                  {[
+                    shippingAddress.city,
+                    shippingAddress.state,
+                    shippingAddress.zip,
+                  ]
+                    .filter(Boolean)
+                    .join(", ")}
+                  <br />
+                  {shippingAddress.country}
+                </div>
+              </Form.Group>
               {/* {staticAddress.line1}, {staticAddress.line2},<br />
               {staticAddress.city}, {staticAddress.state}, {staticAddress.zip},<br />
               {staticAddress.country} */}
@@ -103,7 +122,7 @@ const PaymentModal = ({ show, handleClose, onConfirm, totalAmount }) => {
             <div className="text-success">
               {estimatedDeliveryDate.toDateString()} (within 3 days)
             </div>
-            <small className="text-muted">Currently based on static data</small>
+            {/* <small className="text-muted">Currently based on static data</small> */}
           </Form.Group>
         </Form>
       </Modal.Body>

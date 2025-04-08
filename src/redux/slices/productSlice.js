@@ -37,6 +37,14 @@ const productSlice = createSlice({
     setStatus: (state, action) => {
       state.status = action.payload;
     },
+    addReviewToProduct: (state, action) => {
+      const { productId, review } = action.payload;
+      const product = state.products.find(p => p._id === productId);
+      if (product) {
+        product.reviews = product.reviews || [];
+        product.reviews.unshift(review);
+      }
+    }
   },
 });
 
@@ -47,6 +55,7 @@ export const {
   updateProduct,
   setError,
   setStatus,
+  addReviewToProduct,
 } = productSlice.actions;
 
 export default productSlice.reducer;

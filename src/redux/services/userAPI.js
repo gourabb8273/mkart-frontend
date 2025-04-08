@@ -68,7 +68,6 @@ export const fetchUserData = (id) => async (dispatch) => {
       params: { userId: id },
     });
     const matchedUser = response.data?.data;
-    debugger
     if (matchedUser) {
       dispatch(setUserProfile(matchedUser));
       dispatch(setStatus("succeeded"));
