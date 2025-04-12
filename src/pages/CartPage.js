@@ -3,15 +3,23 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Container, Row, Col, Card, Button, Image } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
 import { Plus, Dash } from 'react-bootstrap-icons';
-import { updateQuantity, removeFromCart, clearCart} from '../redux/slices/cartSlice';
-import { removeCartItem, updateCartItemQuantity } from '../redux/services/cartAPI';
-import PaymentModal from './PaymentModal';
+import { updateQuantity, removeFromCart, clearCart } from '../redux/slices/cartSlice';
+import { removeCartItem, updateCartItemQuantity, markCartItemsAsOrdered } from '../redux/services/cartAPI';
 import { addOrder } from '../redux/services/orderAPI';
-import { showNotification } from './notification';
-import { markCartItemsAsOrdered } from '../redux/services/cartAPI';
-import { FaArrowLeft } from "react-icons/fa";
+import { showNotification } from '../components/Notification';
+import PaymentModal from '../components/PaymentModal';
 import { Box, IconButton, Typography } from "@mui/material";
-import { ArrowLeft } from "lucide-react"; 
+import { ArrowLeft } from "lucide-react";
+
+const EMPTY_CART_MESSAGE = 'Your cart is empty.';
+const BACK_TO_PRODUCTS_TEXT = 'Back to Products';
+const CART_TITLE = 'Cart';
+const PRICE_LABEL = 'Price: $';
+const SUBTOTAL_LABEL = 'Subtotal: $';
+const TOTAL_LABEL = 'Total: $';
+const PROCEED_TO_CHECKOUT_TEXT = 'Proceed to Checkout';
+const ORDER_SUCCESS = 'Order placed successfully';
+const ORDER_FAILURE = 'Failed to place order';
 
 function CartPage() {
   const history = useHistory();
@@ -40,7 +48,7 @@ function CartPage() {
         await updateCartItemQuantity({ userId, productId, quantity: newQuantity });
         dispatch(updateQuantity({ productId, quantity: newQuantity }));
       } catch (error) {
-        console.error('Error updating quantity:', error);
+        console.error(error);
       }
     }
   };
@@ -48,13 +56,13 @@ function CartPage() {
   const handleDecrease = async (productId) => {
     const item = cartItems.find(i => i.productId === productId);
     if (!item || !userId) return;
-  
+
     if (item.quantity === 1) {
       try {
         await removeCartItem({ userId, productId });
         dispatch(removeFromCart({ productId }));
       } catch (error) {
-        console.error('Error removing item from cart:', error);
+        console.error(error);
       }
     } else {
       const newQuantity = item.quantity - 1;
@@ -62,7 +70,7 @@ function CartPage() {
         await updateCartItemQuantity({ userId, productId, quantity: newQuantity });
         dispatch(updateQuantity({ productId, quantity: newQuantity }));
       } catch (error) {
-        console.error('Error updating quantity:', error);
+        console.error(error);
       }
     }
   };
@@ -71,7 +79,6 @@ function CartPage() {
     (sum, item) => sum + item.price * item.quantity,
     0
   );
-
 
   const handleConfirmPayment = async ({ paymentMode, shippingAddress }) => {
     const orderData = {
@@ -85,48 +92,48 @@ function CartPage() {
         subtotal: item.price * item.quantity,
       })),
       totalAmount: totalPrice,
-      paymentMode: paymentMode, 
+      paymentMode,
       shippingAddress,
     };
 
     try {
       await addOrder(orderData);
-      debugger
       const cartIds = cartItems.map(item => item._id);
       await markCartItemsAsOrdered(cartIds);
-  
-      showNotification("Order placed successfully", "success");
+
+      showNotification(ORDER_SUCCESS, "success");
       setShowPaymentModal(false);
       dispatch(clearCart());
       history.push('/orders');
     } catch (error) {
-      console.error("Error placing order:", error);
-      showNotification("Failed to place order", "error");
+      console.error(error);
+      showNotification(ORDER_FAILURE, "error");
     }
   };
 
   return (
     <Container className="py-4">
       <Box sx={{ display: "flex", alignItems: "center", mb: 4, gap: 2 }}>
-      <IconButton
-        onClick={() => history.push("/")}
-        sx={{ display: { xs: "none", sm: "flex" } }}
-      >
-        <ArrowLeft size={20} /> 
-      </IconButton>
-      <Typography
-        variant="h4"
-        component="h1"
-        sx={{ fontSize: { xs: "0.5rem", sm: "1.5rem" }, fontWeight: 400 }}
-      >
-        Cart
-      </Typography>
-    </Box>
+        <IconButton
+          onClick={() => history.push("/")}
+          sx={{ display: { xs: "none", sm: "flex" } }}
+        >
+          <ArrowLeft size={20} />
+        </IconButton>
+        <Typography
+          variant="h4"
+          component="h1"
+          sx={{ fontSize: { xs: "0.5rem", sm: "1.5rem" }, fontWeight: 400 }}
+        >
+          {CART_TITLE}
+        </Typography>
+      </Box>
+
       {mergedCart.length === 0 ? (
         <>
-          <p className="text-center">Your cart is empty.</p>
+          <p className="text-center">{EMPTY_CART_MESSAGE}</p>
           <Button variant="outline-secondary" onClick={() => history.push('/')}>
-            Back to Products
+            {BACK_TO_PRODUCTS_TEXT}
           </Button>
         </>
       ) : (
@@ -148,7 +155,10 @@ function CartPage() {
                   </Col>
                   <Col xs={12} md={8}>
                     <h5>{item.name}</h5>
-                    <p className="mb-1">Price: ${item.price.toFixed(2)}</p>
+                    <p className="mb-1">
+                      {PRICE_LABEL}
+                      {item.price.toFixed(2)}
+                    </p>
                     <div className="d-flex align-items-center mb-2">
                       <Button
                         variant="outline-danger"
@@ -167,33 +177,37 @@ function CartPage() {
                       </Button>
                     </div>
                     <p className="mb-0 fw-semibold">
-                      Subtotal: ${(item.price * item.quantity).toFixed(2)}
+                      {SUBTOTAL_LABEL}
+                      {(item.price * item.quantity).toFixed(2)}
                     </p>
                   </Col>
                 </Row>
               </Card>
             ))}
-  
-            {/* Footer Actions */}
+
             <div className="text-end">
-              <h5>Total: ${totalPrice.toFixed(2)}</h5>
+              <h5>
+                {TOTAL_LABEL}
+                {totalPrice.toFixed(2)}
+              </h5>
               <Button
                 variant="success"
                 className="me-2"
                 onClick={() => setShowPaymentModal(true)}
               >
-                Proceed to Checkout
+                {PROCEED_TO_CHECKOUT_TEXT}
               </Button>
               <Button
                 variant="outline-secondary"
                 onClick={() => history.push('/')}
               >
-                Back to Products
+                {BACK_TO_PRODUCTS_TEXT}
               </Button>
             </div>
           </Col>
         </Row>
       )}
+
       <PaymentModal
         show={showPaymentModal}
         handleClose={() => setShowPaymentModal(false)}

@@ -9,7 +9,7 @@ import { Box, IconButton, Typography } from "@mui/material";
 import { ArrowLeft } from "lucide-react";
 import ProductReviewSection from "../components/ProductReviewSection";
 import PaymentModal from "../components/PaymentModal";
-import { showNotification } from "../components/notification";
+import { showNotification } from "../components/Notification";
 import { addItemToCart } from "../redux/services/cartAPI";
 import { addToCart, updateQuantity, setCartItems } from "../redux/slices/cartSlice";
 import { getCartItems } from "../redux/services/cartAPI";
@@ -182,7 +182,7 @@ const ProductPage = () => {
                 ))}
               </div>
               <div className="mt-4 d-flex gap-3">
-                <Button variant="primary" size="sm" onClick={handleBuyNow}>
+                <Button variant="primary" size="sm" disabled onClick={handleBuyNow}>
                   Buy Now
                 </Button>
                 {userId ? (

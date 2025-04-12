@@ -1,8 +1,7 @@
 import React from 'react';
 import { Navbar, Nav, Container, Dropdown } from 'react-bootstrap';
 import { FaUserCircle } from 'react-icons/fa';
-import LoginButton from './loginButton';
-import LogoutButton from './logoutButton';
+import LoginButton from './LoginButton';
 
 const BRAND_NAME = "Mkart";
 const PROFILE_ICON_SIZE = 25;

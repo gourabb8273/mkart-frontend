@@ -6,13 +6,13 @@ import { ToastContainer } from "react-toastify";
 import { useDispatch } from "react-redux";
 import { saveUserData } from "./redux/services/userAPI";
 import Navbar from "./components/Navbar";
-import FeaturePage from "./components/ProductPage";
+import FeaturePage from "./pages/ProductPage";
 import ProductPage from "./pages/productDetails"; 
-import CartPage from "./components/CartPage"; // ✅ Import CartPage
-import UserProfileModal from "./components/userProfileModal";
+import CartPage from "./pages/CartPage"; 
+import UserProfileModal from "./components/UserProfileModal";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { logoutUser } from "./redux/slices/userSlice";
-import OrderHistoryPage from "./components/OrderHistoryPage";
+import OrderHistoryPage from "./pages/OrderHistoryPage";
 
 function App() {
   const { user, isAuthenticated, logout } = useAuth0();

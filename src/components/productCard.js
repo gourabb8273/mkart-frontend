@@ -18,7 +18,7 @@ import {
   setWatchlistError,
 } from "../redux/slices/userSlice";
 import { addToCart, updateQuantity } from "../redux/slices/cartSlice";
-import { showNotification } from "./notification";
+import { showNotification } from "./Notification";
 import { addItemToCart } from "../redux/services/cartAPI";
 
 const API_BASE_URL = process.env.REACT_APP_USER_SERVICE_API_BASE_URL;
@@ -86,16 +86,16 @@ const ProductCard = ({ product }) => {
     const newQuantity = quantityInCart + 1;
 
     try {
-     const res = await addItemToCart({
+      const res = await addItemToCart({
         userId,
         productId: product._id,
         quantity: newQuantity,
       });
       if (quantityInCart === 0) {
-        dispatch(addToCart({_id:res._id, productId: product._id, quantity: 1 }));
+        dispatch(addToCart({ _id: res._id, productId: product._id, quantity: 1 }));
       } else {
         dispatch(
-          updateQuantity({_id:res._id, productId: product._id, quantity: newQuantity })
+          updateQuantity({ _id: res._id, productId: product._id, quantity: newQuantity })
         );
       }
 
@@ -291,10 +291,8 @@ const ProductCard = ({ product }) => {
                 style={{
                   borderRadius: "4px",
                   background: '#198754',
-                  // "#ff9f00",
                   border: "none",
                   color: 'white',
-                  // "#000",
                   fontWeight: "500",
                   display: "flex",
                   alignItems: "center",

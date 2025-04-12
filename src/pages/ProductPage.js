@@ -5,12 +5,25 @@ import { useDispatch, useSelector } from "react-redux";
 import { setProducts, setError, setStatus } from "../redux/slices/productSlice";
 import { setCartItems } from "../redux/slices/cartSlice";
 import axios from "axios";
-import ProductCard from "./productCard";
+import ProductCard from "../components/ProductCard";
 import { getWatchlistData } from "../redux/services/watchlistAPI";
 import { getCartItems } from "../redux/services/cartAPI";
 import { useHistory } from "react-router-dom";
 
 const API_BASE_URL = process.env.REACT_APP_PRODUCT_CATELOG_API_BASE_URL;
+
+const SEARCH_PLACEHOLDER = "Search products...";
+const CATEGORY_ALL = "All Categories";
+const CATEGORY_APPAREL = "Apparel";
+const CATEGORY_ACCESSORIES = "Accessories";
+const WISHLIST_TEXT = "Wishlist";
+const CART_TEXT = "Cart";
+const LOADING_TEXT = "Loading products...";
+const ERROR_TEXT = "Error: ";
+const NO_PRODUCTS_FOUND = "No products found.";
+const FEATURED = "Featured";
+const POPULAR = "Popular";
+const ALL = "All";
 
 function ProductPage() {
   const history = useHistory();
@@ -25,14 +38,13 @@ function ProductPage() {
   const watchlist = useSelector((state) => state.user.watchlist) || [];
   const { _id } = profile;
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState("All");
-  const [filterType, setFilterType] = useState("All");
+  const [selectedCategory, setSelectedCategory] = useState(ALL);
+  const [filterType, setFilterType] = useState(ALL);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [wishlistCount, setWishlistCount] = useState(0);
   const [cartCount, setCartCount] = useState(0);
   const [showWishlistOnly, setShowWishlistOnly] = useState(false);
 
-  // Fetch watchlist
   useEffect(() => {
     if (_id) dispatch(getWatchlistData(_id));
   }, [_id, dispatch]);
@@ -59,15 +71,14 @@ function ProductPage() {
     setCartCount(cart.length);
   }, [cart]);
 
-  // Fetch products
   useEffect(() => {
     const fetchProducts = async () => {
       dispatch(setStatus("loading"));
       try {
         let queryParams = [];
-        if (filterType === "Featured") queryParams.push("featured=true");
-        else if (filterType === "Popular") queryParams.push("popular=true");
-        if (selectedCategory !== "All")
+        if (filterType === FEATURED) queryParams.push("featured=true");
+        else if (filterType === POPULAR) queryParams.push("popular=true");
+        if (selectedCategory !== ALL)
           queryParams.push(`category=${selectedCategory}`);
         if (searchTerm.trim())
           queryParams.push(`search=${encodeURIComponent(searchTerm.trim())}`);
@@ -77,7 +88,7 @@ function ProductPage() {
         const response = await axios.get(url);
         dispatch(setProducts(response.data));
       } catch (err) {
-        dispatch(setError("Failed to fetch products"));
+        dispatch(setError(ERROR_TEXT));
       }
     };
 
@@ -102,33 +113,34 @@ function ProductPage() {
   const handleFilterTypeChange = (type) => {
     setFilterType(type);
     setShowWishlistOnly(false);
-    setSelectedCategory("All");
+    setSelectedCategory(ALL);
   };
 
   const handleCategoryChange = (e) => {
     setSelectedCategory(e.target.value);
     setShowWishlistOnly(false);
-    setFilterType("All");
+    setFilterType(ALL);
   };
 
   const handleWishlistFilter = () => {
     setShowWishlistOnly((prev) => !prev);
-    setFilterType("All");
-    setSelectedCategory("All");
+    setFilterType(ALL);
+    setSelectedCategory(ALL);
   };
 
   const filterButtons = [
     {
       label: (
         <>
-          <FaFilter /> All
+          <FaFilter /> {ALL}
         </>
       ),
-      value: "All",
+      value: ALL,
     },
-    { label: "Featured", value: "Featured" },
-    { label: "Popular", value: "Popular" },
+    { label: FEATURED, value: FEATURED },
+    { label: POPULAR, value: POPULAR },
   ];
+
   return (
     <Container fluid className="p-0 bg-light" style={{ minHeight: "100vh" }}>
       <Row className="m-0 py-2 align-items-center">
@@ -139,7 +151,7 @@ function ProductPage() {
         >
           <Form.Control
             type="text"
-            placeholder="Search products..."
+            placeholder={SEARCH_PLACEHOLDER}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             style={{
@@ -164,9 +176,9 @@ function ProductPage() {
               fontWeight: 500,
             }}
           >
-            <option value="All">All Categories</option>
-            <option value="Clothing">Apparel</option>
-            <option value="Accessories">Accessories</option>
+            <option value={ALL}>{CATEGORY_ALL}</option>
+            <option value="Clothing">{CATEGORY_APPAREL}</option>
+            <option value="Accessories">{CATEGORY_ACCESSORIES}</option>
           </Form.Select>
 
           <div className="d-flex gap-2 flex-wrap">
@@ -176,8 +188,8 @@ function ProductPage() {
                 <Button
                   key={value}
                   onClick={() =>
-                    value === "All"
-                      ? setFilterType("All")
+                    value === ALL
+                      ? setFilterType(ALL)
                       : handleFilterTypeChange(value)
                   }
                   variant="outline-secondary"
@@ -219,7 +231,7 @@ function ProductPage() {
             }}
           >
             <FaHeart size={20} className="me-2" />
-            <span className="fw-medium">Wishlist ({wishlistCount})</span>
+            <span className="fw-medium">{WISHLIST_TEXT} ({wishlistCount})</span>
           </div>
 
           <div
@@ -228,16 +240,16 @@ function ProductPage() {
             style={{ color: cartCount > 0 ? "rgb(25, 135, 84)" : "#2c3e50" }}
           >
             <FaShoppingCart size={20} className="me-2" />
-            <span className="fw-medium">Cart ({cartCount})</span>
+            <span className="fw-medium">{CART_TEXT} ({cartCount})</span>
           </div>
         </Col>
       </Row>
       <Container fluid className="p-0 m-0 mx-1">
         {status === "loading" && (
-          <div className="text-muted">Loading products...</div>
+          <div className="text-muted">{LOADING_TEXT}</div>
         )}
         {status === "failed" && (
-          <div className="text-danger">Error: {error}</div>
+          <div className="text-danger">{ERROR_TEXT}{error}</div>
         )}
         <div className="d-flex flex-wrap justify-content-start mt-1 gap-0">
           {filteredProducts.map((product) => (
@@ -245,7 +257,7 @@ function ProductPage() {
           ))}
           {filteredProducts.length === 0 && (
             <div style={{ width: "100%", textAlign: "center" }}>
-              <p>No products found.</p>
+              <p>{NO_PRODUCTS_FOUND}</p>
             </div>
           )}
         </div>

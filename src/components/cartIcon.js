@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FaShoppingCart } from 'react-icons/fa';  // Import the cart icon
+import { FaShoppingCart } from 'react-icons/fa';  
 import { Button, Navbar, Nav } from 'react-bootstrap';
 
 const CartWithIcon = () => {
@@ -8,14 +8,12 @@ const CartWithIcon = () => {
   return (
     <Navbar bg="dark" variant="dark" expand="lg">
       <Nav className="ml-auto">
-        {/* Other nav items */}
-        
         <Button 
           variant="link" 
           className="text-white d-flex align-items-center"
         >
           <FaShoppingCart size={24} style={{ marginRight: '8px' }} />
-          <span>{cartCount}</span> {/* Cart count */}
+          <span>{cartCount}</span>
         </Button>
       </Nav>
     </Navbar>

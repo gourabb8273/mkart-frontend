@@ -5,6 +5,17 @@ import { useSelector } from "react-redux";
 import { fetchReviews, addReview } from "../redux/services/reviewAPI";
 import { useParams } from "react-router-dom";
 
+const TEXTS = {
+  ratingsAndReviews: "Ratings & Reviews",
+  writeAReview: "Write a Review",
+  shareExperience: "Share your experience...",
+  submitReview: "Submit Review",
+  loadingText: "Loading reviews...",
+  noReviews: "No reviews available",
+  errorLoadingReviews: "Error loading reviews:",
+  errorSubmittingReview: "Error submitting review:",
+};
+
 const ProductReviewSection = () => {
   const { id: productId } = useParams();
   const profile = useSelector((state) => state.user.profile);
@@ -20,7 +31,7 @@ const ProductReviewSection = () => {
         const data = await fetchReviews(productId);
         setReviews(data);
       } catch (error) {
-        console.error("Error loading reviews:", error);
+        console.error(TEXTS.errorLoadingReviews, error);
       } finally {
         setLoading(false);
       }
@@ -44,7 +55,7 @@ const ProductReviewSection = () => {
       setReviewText("");
       setRating(0);
     } catch (err) {
-      console.error("Error submitting review:", err);
+      console.error(TEXTS.errorSubmittingReview, err);
     }
   };
 
@@ -52,7 +63,7 @@ const ProductReviewSection = () => {
     <Container fluid className="my-5 px-3 px-md-5">
       <Card className="mx-auto p-4 border-0 rounded-2" style={{ backgroundColor: "#e9f7ef", maxWidth: "800px" }}>
         <Card.Body>
-          <h4 className="mb-4 text-center">Ratings & Reviews</h4>
+          <h4 className="mb-4 text-center">{TEXTS.ratingsAndReviews}</h4>
 
           {/* Summary */}
           <div className="d-flex flex-column flex-md-row align-items-center mb-4 text-center text-md-start">
@@ -106,7 +117,7 @@ const ProductReviewSection = () => {
           {profile?._id && (
             <Card className="mt-4 border-0 shadow-sm">
               <Card.Body>
-                <h5 className="mb-3">Write a Review</h5>
+                <h5 className="mb-3">{TEXTS.writeAReview}</h5>
                 <div className="mb-2">
                   {[1, 2, 3, 4, 5].map((i) => (
                     <FaStar
@@ -120,14 +131,14 @@ const ProductReviewSection = () => {
                 <Form.Control
                   as="textarea"
                   rows={3}
-                  placeholder="Share your experience..."
+                  placeholder={TEXTS.shareExperience}
                   value={reviewText}
                   onChange={(e) => setReviewText(e.target.value)}
                   className="mb-2"
                 />
                 <div className="text-end">
                   <Button variant="primary" size="sm" onClick={handleSubmit}>
-                    Submit Review
+                    {TEXTS.submitReview}
                   </Button>
                 </div>
               </Card.Body>
