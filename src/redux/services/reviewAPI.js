@@ -4,7 +4,7 @@ const API_BASE_URL = process.env.REACT_APP_PRODUCT_CATELOG_API_BASE_URL;
 
 export const fetchReviews = async (productId) => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/reviews/${productId}`);
+    const response = await axios.get(`${API_BASE_URL}/products/reviews/${productId}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching reviews:', error);
@@ -14,7 +14,7 @@ export const fetchReviews = async (productId) => {
 
 export const addReview = async (productId, reviewData) => {
   try {
-    const response = await axios.post(`${API_BASE_URL}/reviews/${productId}`, reviewData);
+    const response = await axios.post(`${API_BASE_URL}/products/reviews/${productId}`, reviewData);
     return response.data;
   } catch (error) {
     console.error('Error adding review:', error);
@@ -24,7 +24,7 @@ export const addReview = async (productId, reviewData) => {
 
 export const updateReview = async (reviewId, reviewData) => {
   try {
-    const response = await axios.put(`${API_BASE_URL}/reviews/${reviewId}`, reviewData);
+    const response = await axios.put(`${API_BASE_URL}/products/reviews/${reviewId}`, reviewData);
     return response.data;
   } catch (error) {
     console.error('Error updating review:', error);
@@ -34,7 +34,7 @@ export const updateReview = async (reviewId, reviewData) => {
 
 export const deleteReview = async (reviewId, userId) => {
   try {
-    const response = await axios.delete(`${API_BASE_URL}/reviews/${reviewId}`, {
+    const response = await axios.delete(`${API_BASE_URL}/products/reviews/${reviewId}`, {
       data: { userId },
     });
     return response.data;

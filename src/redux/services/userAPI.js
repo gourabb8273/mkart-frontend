@@ -19,7 +19,7 @@ export const saveUserData = (userDetails) => async (dispatch) => {
       ...userDetails,
       profile: profileWithoutName,
     };
-    const response = await axios.post(`${API_BASE_URL}/save`, userDetails);
+    const response = await axios.post(`${API_BASE_URL}/users/save`, userDetails);
     const serverData = response.data?.data || {};
     const updatedUserDetails = {
       ...userDetails,
@@ -49,7 +49,7 @@ export const saveUserData = (userDetails) => async (dispatch) => {
 export const updateUserData = (profileData) => async (dispatch) => {
   dispatch(setStatus("loading"));
   try {
-    await axios.patch(`${API_BASE_URL}/update`, profileData);    
+    await axios.patch(`${API_BASE_URL}/users/update`, profileData);    
     dispatch(setUserProfile(profileData));
     dispatch(setStatus("succeeded"));
     showNotification("User profile updated successfully!", "success");
@@ -64,7 +64,7 @@ export const updateUserData = (profileData) => async (dispatch) => {
 export const fetchUserData = (id) => async (dispatch) => {
   dispatch(setStatus("loading"));
   try {
-    const response = await axios.get(`${API_BASE_URL}`, {
+    const response = await axios.get(`${API_BASE_URL}/users`, {
       params: { userId: id },
     });
     const matchedUser = response.data?.data;

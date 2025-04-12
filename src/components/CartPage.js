@@ -91,12 +91,13 @@ function CartPage() {
 
     try {
       await addOrder(orderData);
+      debugger
       const cartIds = cartItems.map(item => item._id);
       await markCartItemsAsOrdered(cartIds);
-      dispatch(clearCart());
   
       showNotification("Order placed successfully", "success");
       setShowPaymentModal(false);
+      dispatch(clearCart());
       history.push('/orders');
     } catch (error) {
       console.error("Error placing order:", error);

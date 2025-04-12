@@ -41,10 +41,10 @@ const ProductCard = ({ product }) => {
     if (!userId) return;
 
     const action = isInWishlist
-      ? axios.delete(`${API_BASE_URL}/wishlist/remove`, {
+      ? axios.delete(`${API_BASE_URL}/users/wishlist/remove`, {
           data: { userId, productId: product._id },
         })
-      : axios.post(`${API_BASE_URL}/wishlist/add`, {
+      : axios.post(`${API_BASE_URL}/users/wishlist/add`, {
           userId,
           productId: product._id,
         });
@@ -86,17 +86,16 @@ const ProductCard = ({ product }) => {
     const newQuantity = quantityInCart + 1;
 
     try {
-      await addItemToCart({
+     const res = await addItemToCart({
         userId,
         productId: product._id,
         quantity: newQuantity,
       });
-
       if (quantityInCart === 0) {
-        dispatch(addToCart({ productId: product._id, quantity: 1 }));
+        dispatch(addToCart({_id:res._id, productId: product._id, quantity: 1 }));
       } else {
         dispatch(
-          updateQuantity({ productId: product._id, quantity: newQuantity })
+          updateQuantity({_id:res._id, productId: product._id, quantity: newQuantity })
         );
       }
 

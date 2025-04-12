@@ -14,7 +14,7 @@ const API_BASE_URL = process.env.REACT_APP_USER_SERVICE_API_BASE_URL;
 export const getWatchlistData = (userId) => async (dispatch) => {
   dispatch(setWatchlistStatus("loading"));
   try {
-    const response = await axios.get(`${API_BASE_URL}/wishlist/${userId}`);
+    const response = await axios.get(`${API_BASE_URL}/users/wishlist/${userId}`);
     let watchlistData = response.data?.data || [];
     watchlistData = watchlistData.map(({ userId, ...rest }) => rest);
     dispatch(setWatchlist(watchlistData));
@@ -33,7 +33,7 @@ export const getWatchlistData = (userId) => async (dispatch) => {
 export const addWatchlistData = (watchlistItem) => async (dispatch) => {
   dispatch(setWatchlistStatus("loading"));
   try {
-    const response = await axios.post(`${API_BASE_URL}/wishlist/add`, watchlistItem);
+    const response = await axios.post(`${API_BASE_URL}/users/wishlist/add`, watchlistItem);
     const newItem = response.data?.data;
     dispatch(addWatchlistItem(newItem));
     dispatch(setWatchlistStatus("succeeded"));
@@ -53,7 +53,7 @@ export const removeWatchlistData = (itemDetails) => async (dispatch) => {
   dispatch(setWatchlistStatus("loading"));
   try {
     // Note: Axios DELETE requests that include a request body require using the 'data' option.
-    await axios.delete(`${API_BASE_URL}/wishlist/remove`, { data: itemDetails });
+    await axios.delete(`${API_BASE_URL}/users/wishlist/remove`, { data: itemDetails });
     dispatch(removeWatchlistItem(itemDetails));
     dispatch(setWatchlistStatus("succeeded"));
     showNotification("Item removed from watchlist successfully!", "success");
