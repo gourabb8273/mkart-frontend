@@ -1,9 +1,9 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getOrders } from "../redux/services/orderAPI";
 import { setOrders, setError, setStatus } from "../redux/slices/orderSlice";
 import { useHistory } from "react-router-dom";
-import { 
+import {
   Stepper,
   Step,
   StepLabel,
@@ -22,7 +22,7 @@ import {
   TableHead,
   TableRow,
   Paper,
-  IconButton, 
+  IconButton,
   Tooltip,
   Typography
 } from "@mui/material";
@@ -85,13 +85,12 @@ const StatusStepIconRoot = styled('div')(({ theme, ownerState }) => ({
 
 function StatusStepIcon(props) {
   const { active, completed, index } = props;
-
   return (
-    <StatusStepIconRoot 
-      ownerState={{ 
-        active, 
-        completed, 
-        color: statusSteps[index].color 
+    <StatusStepIconRoot
+      ownerState={{
+        active,
+        completed,
+        color: statusSteps[index].color
       }}
     >
       {statusSteps[index].icon}
@@ -101,7 +100,6 @@ function StatusStepIcon(props) {
 
 function StatusProgress({ status }) {
   const activeStep = statusMap[status.toLowerCase()] || 0;
-
   return (
     <Box sx={{ width: '100%', position: 'relative' }}>
       <Stepper
@@ -111,7 +109,7 @@ function StatusProgress({ status }) {
       >
         {statusSteps.map((step, index) => (
           <Step key={step.label} completed={activeStep > index}>
-            <StepLabel 
+            <StepLabel
               StepIconComponent={(props) => <StatusStepIcon {...props} index={index} />}
               sx={{
                 '& .MuiStepLabel-label': {
@@ -137,6 +135,7 @@ const OrderHistoryPage = () => {
   const profile = useSelector((state) => state.user.profile) || {};
   const { _id: userId } = profile;
   const { orders = [], status, error } = useSelector((state) => state.order || {});
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -152,23 +151,47 @@ const OrderHistoryPage = () => {
     fetchOrders();
   }, [dispatch, userId]);
 
+  const filteredOrders = orders.filter((order) => {
+    const search = searchTerm.toLowerCase();
+    const idMatch = order._id.toLowerCase().includes(search);
+    const productMatch = order.products?.some(p => p.name.toLowerCase().includes(search));
+    return idMatch || productMatch;
+  });
+
   return (
     <Container maxWidth="xl" sx={{ py: 4, px: { xs: 1, sm: 2 } }}>
       <Box sx={{ display: "flex", alignItems: "center", mb: 4, gap: 2 }}>
-           <IconButton
-             onClick={() => history.push("/")}
-             sx={{ display: { xs: "none", sm: "flex" } }}
-           >
-             <ArrowLeft size={20} /> 
-           </IconButton>
-           <Typography
-             variant="h4"
-             component="h1"
-             sx={{ fontSize: { xs: "0.5rem", sm: "1.5rem" }, fontWeight: 400 }}
-           >
-             Order History
-           </Typography>
-         </Box>
+        <IconButton
+          onClick={() => history.push("/")}
+          sx={{ display: { xs: "none", sm: "flex" } }}
+        >
+          <ArrowLeft size={20} />
+        </IconButton>
+        <Typography
+          variant="h4"
+          component="h1"
+          sx={{ fontSize: { xs: "0.5rem", sm: "1.5rem" }, fontWeight: 400 }}
+        >
+          Order History
+        </Typography>
+      </Box>
+
+      <Box sx={{ mb: 3, display: 'flex', justifyContent: 'flex-end' }}>
+        <input
+          type="text"
+          placeholder="Search orders..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          style={{
+            padding: '8px 12px',
+            borderRadius: 8,
+            border: '1px solid #ccc',
+            width: '100%',
+            maxWidth: 300,
+            fontSize: '0.9rem'
+          }}
+        />
+      </Box>
 
       {status === "loading" && (
         <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
@@ -182,33 +205,12 @@ const OrderHistoryPage = () => {
         </Alert>
       )}
 
-      {orders.length === 0 && status !== "loading" ? (
-        <Alert severity="info">No orders found</Alert>
+      {filteredOrders.length === 0 && status !== "loading" ? (
+        <Alert severity="info">No matching orders found</Alert>
       ) : (
-        <TableContainer 
-          component={Paper} 
-          sx={{ 
-            borderRadius: 2,
-            overflowX: 'auto',
-            '& .MuiTable-root': {
-              minWidth: 600
-            }
-          }}
-        >
-          <Table sx={{ 
-            '& .MuiTableCell-root': {
-              py: { xs: 1, sm: 2 },
-              px: { xs: 0.5, sm: 2 }
-            }
-          }}>
-            <TableHead sx={{ 
-              '& .MuiTableRow-root': {
-                '& .MuiTableCell-root': {
-                  fontSize: { xs: '0.75rem', sm: '0.875rem' },
-                  whiteSpace: 'nowrap'
-                }
-              }
-            }}>
+        <TableContainer component={Paper} sx={{ borderRadius: 2, overflowX: 'auto', '& .MuiTable-root': { minWidth: 600 } }}>
+          <Table sx={{ '& .MuiTableCell-root': { py: { xs: 1, sm: 2 }, px: { xs: 0.5, sm: 2 } } }}>
+            <TableHead sx={{ '& .MuiTableRow-root .MuiTableCell-root': { fontSize: { xs: '0.75rem', sm: '0.875rem' }, whiteSpace: 'nowrap' } }}>
               <TableRow>
                 <TableCell sx={{ width: { xs: 80, sm: 120 } }}>Product</TableCell>
                 <TableCell>Details</TableCell>
@@ -218,12 +220,8 @@ const OrderHistoryPage = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {orders.map((order) => (
-                <TableRow
-                  key={order._id}
-                  hover
-                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                >
+              {filteredOrders.map((order) => (
+                <TableRow key={order._id} hover sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                   <TableCell>
                     <Avatar
                       variant="rounded"
@@ -232,14 +230,10 @@ const OrderHistoryPage = () => {
                         width: { xs: 48, sm: 64 },
                         height: { xs: 48, sm: 64 },
                         bgcolor: 'grey.100',
-                        '& img': { 
-                          objectFit: 'cover',
-                          transform: 'scale(0.9)'
-                        }
+                        '& img': { objectFit: 'cover', transform: 'scale(0.9)' }
                       }}
                     />
                   </TableCell>
-
                   <TableCell>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                       <Typography variant="body2" fontWeight={500} sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
@@ -258,100 +252,57 @@ const OrderHistoryPage = () => {
                         day: 'numeric'
                       })}
                     </Typography>
-
-                    {/* Payment Status */}
-                    <Typography 
-                      variant="caption" 
-                      sx={{ 
-                        fontSize: { xs: '0.6rem', sm: '0.75rem' },
-                        backgroundColor: order.paymentStatus === 'success' ? '#4CAF5020' : 
-                        order.paymentStatus === 'failed' ? '#f4433620' : 
-                        '#9E9E9E20',
-                        mt: 0.5
-                      }}
-                    >
-                      Payment: {order.paymentMode} 
-                      {/* ({order.paymentStatus}) */}
+                    <Typography variant="caption" sx={{
+                      fontSize: { xs: '0.6rem', sm: '0.75rem' },
+                      backgroundColor: order.paymentStatus === 'success' ? '#4CAF5020' :
+                        order.paymentStatus === 'failed' ? '#f4433620' :
+                          '#9E9E9E20',
+                      mt: 0.5
+                    }}>
+                      Payment: {order.paymentMode}
                     </Typography>
-
-                    {/* Expected Delivery Date */}
-                    <Typography 
-                      variant="caption" 
-                      color="text.secondary"
-                      sx={{ 
-                        fontSize: '0.6rem',
-                        display: 'block',
-                        mt: 0.5
-                      }}
-                    >
+                    <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.6rem', display: 'block', mt: 0.5 }}>
                       Expected Delivery: May 20, 2024
                     </Typography>
-
-                    {/* Shipping Address */}
-                    <Typography 
-                      variant="caption" 
-                      color="text.primary" 
-                      sx={{ 
-                        fontSize: { xs: '0.65rem', sm: '0.7rem' },
-                        display: 'block',
-                        whiteSpace: 'nowrap',
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        maxWidth: 200,
-                        mt: 0.5
-                      }}
-                      title={`${order.shippingAddress?.line1}, ${order.shippingAddress?.city}, ${order.shippingAddress?.state} ${order.shippingAddress?.postalCode}`}
-                    >
+                    <Typography variant="caption" color="text.primary" sx={{
+                      fontSize: { xs: '0.65rem', sm: '0.7rem' },
+                      display: 'block',
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      maxWidth: 200,
+                      mt: 0.5
+                    }}
+                      title={`${order.shippingAddress?.line1}, ${order.shippingAddress?.city}, ${order.shippingAddress?.state} ${order.shippingAddress?.postalCode}`}>
                       📦 {order.shippingAddress?.line1?.split(',')[0]}, {order.shippingAddress?.city}
                     </Typography>
                   </TableCell>
-
                   <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>
                     {order.products?.map((item, i) => (
-                      <Box key={i} sx={{ 
-                        display: 'flex', 
-                        alignItems: 'center', 
-                        gap: 1.5,
-                        '&:not(:last-child)': { mb: 1 }
-                      }}>
+                      <Box key={i} sx={{ display: 'flex', alignItems: 'center', gap: 1.5, '&:not(:last-child)': { mb: 1 } }}>
                         <Typography variant="body2" noWrap sx={{ fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
                           {item.name}
                         </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                          ×{item.quantity}
-                        </Typography>
-                        <Typography 
-                          variant="body2" 
-                          sx={{ 
-                            fontFamily: 'monospace',
-                            color: 'text.secondary',
-                            ml: 'auto',
-                            fontSize: { xs: '0.75rem', sm: '0.875rem' }
-                          }}
-                        >
+                        <Typography variant="body2" color="text.secondary">×{item.quantity}</Typography>
+                        <Typography variant="body2" sx={{ fontFamily: 'monospace', color: 'text.secondary', ml: 'auto', fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
                           ${item.price.toFixed(2)}
                         </Typography>
                       </Box>
                     ))}
                   </TableCell>
-
                   <TableCell sx={{ verticalAlign: 'middle' }}>
                     <Box sx={{ transform: 'translateY(4px)' }}>
                       <StatusProgress status={order.orderStatus} />
                     </Box>
                   </TableCell>
-
                   <TableCell align="right" sx={{ verticalAlign: 'middle' }}>
-                    <Typography 
-                      variant="body1" 
-                      sx={{ 
-                        fontWeight: 700,
-                        color: 'success.main',
-                        fontFamily: 'monospace',
-                        fontSize: { xs: '0.875rem', sm: '1rem' },
-                        whiteSpace: 'nowrap'
-                      }}
-                    >
+                    <Typography variant="body1" sx={{
+                      fontWeight: 700,
+                      color: 'success.main',
+                      fontFamily: 'monospace',
+                      fontSize: { xs: '0.875rem', sm: '1rem' },
+                      whiteSpace: 'nowrap'
+                    }}>
                       ${order.totalAmount?.toFixed(2)}
                     </Typography>
                   </TableCell>
