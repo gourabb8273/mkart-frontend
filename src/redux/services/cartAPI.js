@@ -45,7 +45,7 @@ export const updateCartItemQuantity = async ({
 };
 
 export const removeCartItem = ({ userId, productId }) =>
-  axios.delete(`${API_BASE_URL}/cart`, {
+  axios.delete(`${API_BASE_URL}/carts`, {
     data: { userId, productId },
   });
 
