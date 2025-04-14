@@ -7,7 +7,7 @@ import { useDispatch } from "react-redux";
 import { saveUserData } from "./redux/services/userAPI";
 import Navbar from "./components/Navbar";
 import FeaturePage from "./pages/ProductPage";
-import ProductPage from "./pages/productDetails"; 
+import ProductPage from "./pages/ProductDetails"; 
 import CartPage from "./pages/CartPage"; 
 import UserProfileModal from "./components/UserProfileModal";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";

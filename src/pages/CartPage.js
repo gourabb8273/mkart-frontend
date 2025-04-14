@@ -188,7 +188,7 @@ function CartPage() {
             <div className="text-end">
               <h5>
                 {TOTAL_LABEL}
-                {totalPrice.toFixed(2)}
+                {totalPrice?.toFixed(2)}
               </h5>
               <Button
                 variant="success"

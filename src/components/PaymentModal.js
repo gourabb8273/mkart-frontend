@@ -32,7 +32,7 @@ const PaymentModal = ({ show, handleClose, onConfirm, totalAmount }) => {
       </Modal.Header>
       <Modal.Body className="px-4">
         <h5 className="text-center mb-4">
-          Total Amount: <strong>${totalAmount.toFixed(2)}</strong>
+          Total Amount: <strong>${totalAmount && totalAmount.toFixed(2)}</strong>
         </h5>
         <Form>
           <Form.Group controlId="paymentMode" className="mb-4">

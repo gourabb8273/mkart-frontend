@@ -262,7 +262,7 @@ const OrderHistoryPage = () => {
                       Payment: {order.paymentMode}
                     </Typography>
                     <Typography variant="caption" color="text.secondary" sx={{ fontSize: '0.6rem', display: 'block', mt: 0.5 }}>
-                      Expected Delivery: May 20, 2024
+                      Expected Delivery: May 20, 2025
                     </Typography>
                     <Typography variant="caption" color="text.primary" sx={{
                       fontSize: { xs: '0.65rem', sm: '0.7rem' },
@@ -285,7 +285,7 @@ const OrderHistoryPage = () => {
                         </Typography>
                         <Typography variant="body2" color="text.secondary">×{item.quantity}</Typography>
                         <Typography variant="body2" sx={{ fontFamily: 'monospace', color: 'text.secondary', ml: 'auto', fontSize: { xs: '0.75rem', sm: '0.875rem' } }}>
-                          ${item.price.toFixed(2)}
+                          ${item.price?.toFixed(2)}
                         </Typography>
                       </Box>
                     ))}

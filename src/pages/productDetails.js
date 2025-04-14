@@ -1,5 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { Container, Row, Col, Button, Card, Image, Carousel, Badge } from "react-bootstrap";
+import {
+  Container,
+  Row,
+  ListGroup,
+  Col,
+  Button,
+  Card,
+  Image,
+  Carousel,
+  Badge,
+} from "react-bootstrap";
 import { useHistory, useParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import Zoom from "react-medium-image-zoom";
@@ -11,10 +21,84 @@ import ProductReviewSection from "../components/ProductReviewSection";
 import PaymentModal from "../components/PaymentModal";
 import { showNotification } from "../components/Notification";
 import { addItemToCart } from "../redux/services/cartAPI";
-import { addToCart, updateQuantity, setCartItems } from "../redux/slices/cartSlice";
+import {
+  addToCart,
+  updateQuantity,
+  setCartItems,
+} from "../redux/slices/cartSlice";
 import { getCartItems } from "../redux/services/cartAPI";
 import { addOrder } from "../redux/services/orderAPI";
+import { fetchReviews } from "../redux/services/reviewAPI";
 
+const BUY_NOW = "Buy Now";
+const ADD_TO_CART = "Add to Cart";
+const OUT_OF_STOCK = "Out of Stock";
+const IN_CART = "In Cart";
+
+const SellerInfo = () => {
+  const [showDeliveryDate, setShowDeliveryDate] = useState(false);
+  const [pincode, setPincode] = useState('');
+
+  const handleCheck = () => {
+    if (pincode.length === 6) {
+      setShowDeliveryDate(true);
+    }
+  };
+
+  return (
+    <Container className="p-4 rounded" style={{ maxWidth: '400px' }}>
+      <h6 className="text-dark mb-3 text-start fw-bold">Seller</h6>
+      
+      {/* Seller Policies */}
+      <div className="ms-3">
+        <div className="d-flex align-items-start mb-2">
+          <span className="text-success me-2">•</span>
+          <span>7 Days Replacement Policy</span>
+        </div>
+        <div className="d-flex align-items-start mb-4">
+          <span className="text-success me-2">•</span>
+          <span>GST invoice available</span>
+        </div>
+      </div>
+
+      {/* Delivery Date Check */}
+      <div className="mb-4">
+        <p className="text-secondary mb-2 text-start">Check delivery date</p>
+        <div className="d-flex gap-2">
+          <input 
+            type="text"
+            placeholder="Enter PIN code"
+            className="form-control"
+            style={{ maxWidth: '150px' }}
+            maxLength="6"
+            value={pincode}
+            onChange={(e) => setPincode(e.target.value)}
+            inputMode="numeric"
+            pattern="[0-9]*"
+          />
+          <button 
+            className="btn btn-primary px-3"
+            onClick={handleCheck}
+          >
+            Check
+          </button>
+        </div>
+        
+        {showDeliveryDate && (
+          <div className="mt-3 text-success text-start">
+            <i className="fas fa-check-circle me-2"></i>
+            Delivery by 20 May 2025
+          </div>
+        )}
+      </div>
+
+      {/* Other Sellers Link */}
+      {/* <a href="#" className="text-primary text-decoration-none">
+        See other sellers <i className="fas fa-chevron-right ms-1" style={{ fontSize: '0.75rem' }}></i>
+      </a> */}
+    </Container>
+  );
+};
 const ProductPage = () => {
   const { id } = useParams();
   const history = useHistory();
@@ -29,6 +113,12 @@ const ProductPage = () => {
   const [cartCount, setCartCount] = useState(0);
   const [index, setIndex] = useState(0);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [reviewStats, setReviewStats] = useState({ average: 0, count: 0 });
+
+  // Function to update the review summary
+  const handleSummaryUpdate = (newSummary) => {
+    setReviewStats(newSummary);
+  };
 
   useEffect(() => {
     if (userId) {
@@ -70,7 +160,9 @@ const ProductPage = () => {
       if (quantityInCart === 0) {
         dispatch(addToCart({ productId: product._id, quantity: 1 }));
       } else {
-        dispatch(updateQuantity({ productId: product._id, quantity: newQuantity }));
+        dispatch(
+          updateQuantity({ productId: product._id, quantity: newQuantity })
+        );
       }
       showNotification("Item added to cart", "success");
     } catch (error) {
@@ -88,7 +180,8 @@ const ProductPage = () => {
           name: product.name,
           price: product.price,
           quantity: 1,
-          image: product.images && product.images[0] ? product.images[0].url : "",
+          image:
+            product.images && product.images[0] ? product.images[0].url : "",
           subtotal: product.price,
         },
       ],
@@ -108,12 +201,23 @@ const ProductPage = () => {
   };
 
   return (
-    <Container fluid className="py-4" style={{ backgroundColor: "#fff", minHeight: "100vh", position: "relative" }}>
+    <Container
+      fluid
+      className="py-4"
+      style={{
+        backgroundColor: "#fff",
+        minHeight: "100vh",
+        position: "relative",
+      }}
+    >
       <div
         onClick={() => history.push("/cart")}
         style={{ position: "absolute", top: 20, right: 20, cursor: "pointer" }}
       >
-        <FaShoppingCart size={24} color={cartCount > 0 ? "rgb(25, 135, 84)" : "#2c3e50"} />
+        <FaShoppingCart
+          size={24}
+          color={cartCount > 0 ? "rgb(25, 135, 84)" : "#2c3e50"}
+        />
         {cartCount > 0 && (
           <span
             style={{
@@ -131,7 +235,7 @@ const ProductPage = () => {
           </span>
         )}
       </div>
-  
+
       <Row>
         <Box sx={{ display: "flex", alignItems: "center", mb: 4, gap: 2 }}>
           <IconButton
@@ -149,16 +253,26 @@ const ProductPage = () => {
           </Typography>
         </Box>
       </Row>
-  
+
       {product ? (
         <>
           <Row className="w-75 mx-auto">
             <Col md={6} className="d-flex flex-column align-items-center">
-              <Carousel activeIndex={index} onSelect={handleSelect} indicators={false} className="w-100">
+              <Carousel
+                activeIndex={index}
+                onSelect={handleSelect}
+                indicators={false}
+                className="w-100"
+              >
                 {product.images.map((img, idx) => (
                   <Carousel.Item key={idx}>
                     <Zoom>
-                      <Image src={img.url} alt={product.name} fluid style={{ height: "400px", objectFit: "contain" }} />
+                      <Image
+                        src={img.url}
+                        alt={product.name}
+                        fluid
+                        style={{ height: "400px", objectFit: "contain" }}
+                      />
                     </Zoom>
                   </Carousel.Item>
                 ))}
@@ -182,16 +296,26 @@ const ProductPage = () => {
                 ))}
               </div>
               <div className="mt-4 d-flex gap-3">
-                <Button variant="primary" size="sm" disabled onClick={handleBuyNow}>
-                  Buy Now
+                <Button
+                  variant="primary"
+                  size="sm"
+                  onClick={handleBuyNow}
+                  disabled={!userId || product.stock === 0}
+                >
+                  {BUY_NOW}
                 </Button>
                 {userId ? (
-                  <Button variant="warning" size="sm" onClick={handleAddToCart} disabled={product.stock === 0}>
+                  <Button
+                    variant="warning"
+                    size="sm"
+                    onClick={handleAddToCart}
+                    disabled={product.stock === 0}
+                  >
                     {product.stock === 0
-                      ? "Out of Stock"
+                      ? OUT_OF_STOCK
                       : quantityInCart > 0
-                      ? `In Cart (${quantityInCart})`
-                      : "Add to Cart"}
+                      ? `${IN_CART} (${quantityInCart})`
+                      : ADD_TO_CART}
                   </Button>
                 ) : (
                   <Button variant="secondary" size="sm" disabled>
@@ -200,19 +324,39 @@ const ProductPage = () => {
                 )}
               </div>
             </Col>
-            <Col md={6} className="pt-3 d-flex flex-column align-items-center text-center">
-              <Card style={{ border: "none", boxShadow: "none", width: "100%" }}>
+            <Col
+              md={6}
+              className="pt-3 d-flex flex-column align-items-center text-center"
+            >
+              <Card
+                style={{ border: "none", boxShadow: "none", width: "100%" }}
+              >
                 <Card.Body>
                   <Card.Title as="h3" style={{ fontWeight: "bold" }}>
                     {product.name}
                   </Card.Title>
+
+                  {/* Review Stats */}
                   <div className="d-flex justify-content-center align-items-center mb-2">
-                    <Badge bg="success" style={{ fontSize: "12px", padding: "8px" }}>⭐ 4.2 / 5</Badge>
-                    <span className="ms-2 text-muted" style={{ fontSize: "16px" }}>
-                      (11,785 Ratings & 1,174 Reviews)
+                    <Badge
+                      bg="success"
+                      style={{ fontSize: "12px", padding: "8px" }}
+                    >
+                      ⭐ {reviewStats.average} / 5
+                    </Badge>
+                    <span
+                      className="ms-2 text-muted"
+                      style={{ fontSize: "16px" }}
+                    >
+                      ({reviewStats.count} Review
+                      {reviewStats.count !== 1 && "s"})
                     </span>
                   </div>
-                  <h4 className="text-success">Special Price ${product.price}</h4>
+
+                  {/* Other Product Info */}
+                  <h4 className="text-success">
+                    Special Price ${product.price}
+                  </h4>
                   <p className="text-muted">
                     M.R.P: <s>${(product.price * 1.35).toFixed(0)}</s>{" "}
                     <span className="text-success">(35% Off)</span>
@@ -221,11 +365,16 @@ const ProductPage = () => {
                     <strong>Category:</strong> {product.category}
                   </p>
                   <Card.Text>{product.description}</Card.Text>
+                  < SellerInfo />
                 </Card.Body>
               </Card>
             </Col>
           </Row>
-          <ProductReviewSection productId={id} />
+
+          <ProductReviewSection
+            productId={id}
+            onSummaryUpdate={handleSummaryUpdate}
+          />
         </>
       ) : (
         <Row className="justify-content-center">
@@ -234,7 +383,7 @@ const ProductPage = () => {
           </Col>
         </Row>
       )}
-  
+
       <PaymentModal
         show={showPaymentModal}
         handleClose={() => setShowPaymentModal(false)}
