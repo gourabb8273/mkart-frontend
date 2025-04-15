@@ -9,7 +9,7 @@ import Navbar from "./components/Navbar";
 import FeaturePage from "./pages/ProductPage";
 import ProductPage from "./pages/ProductDetails"; 
 import CartPage from "./pages/CartPage"; 
-import UserProfileModal from "./components/UserProfileModal";
+import UserProfileModal from "./components/ProfileModal";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { logoutUser } from "./redux/slices/userSlice";
 import OrderHistoryPage from "./pages/OrderHistoryPage";
