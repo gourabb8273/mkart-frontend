@@ -1,7 +1,7 @@
 import React from 'react';
 import { Navbar, Nav, Container, Dropdown } from 'react-bootstrap';
 import { FaUserCircle } from 'react-icons/fa';
-import LoginButton from './LoginButton';
+import LoginBtn from './LoginBtn';
 
 const BRAND_NAME = "Mkart";
 const PROFILE_ICON_SIZE = 25;
@@ -20,7 +20,7 @@ function CustomNavbar({ user, isAuthenticated, handleLogout, showModal, setShowM
         <Navbar.Brand href="#home" className="fs-6 text-light">{BRAND_NAME}</Navbar.Brand>
 
         <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="ms-auto">{!isAuthenticated && <LoginButton />}</Nav>
+          <Nav className="ms-auto">{!isAuthenticated && <LoginBtn />}</Nav>
         </Navbar.Collapse>
 
         {isAuthenticated && (
