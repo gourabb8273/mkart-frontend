@@ -31,7 +31,7 @@ const STATIC_TEXT = {
   PLACEHOLDER_APT: 'Apartment, studio, or floor'
 };
 
-function UserProfileModal({ show, handleClose }) {
+function ProfileModal({ show, handleClose }) {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user);
   const profile = user.profile;
@@ -306,4 +306,4 @@ function UserProfileModal({ show, handleClose }) {
   );
 }
 
-export default UserProfileModal;
+export default ProfileModal;
