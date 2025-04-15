@@ -101,7 +101,7 @@ const SellerInfo = () => {
     </Container>
   );
 };
-const ProductPage = () => {
+const ProductDetailsPage = () => {
   const { id } = useParams();
   const history = useHistory();
   const dispatch = useDispatch();
@@ -193,7 +193,6 @@ const ProductPage = () => {
     };
     try {
       await addOrder(orderData);
-      debugger
       const newStockCount = (product.stock || 0) - 1;
       await updateProductStock({
         productId: product._id,
@@ -404,4 +403,4 @@ const ProductPage = () => {
   );
 };
 
-export default ProductPage;
+export default ProductDetailsPage;
