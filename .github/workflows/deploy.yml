@@ -19,9 +19,7 @@ jobs:
           node-version: 14.21.3
 
       - name: Install dependencies
-        run: |
-          npm ci 
-          npm install --save-dev @types/react-router-dom
+        run: npm ci
 
       - name: Build React App
         run: |
