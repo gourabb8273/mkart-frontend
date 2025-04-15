@@ -1,25 +1,35 @@
-import React, { useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { Container, Row, Col, Card, Button, Image } from 'react-bootstrap';
-import { useHistory } from 'react-router-dom';
-import { Plus, Dash } from 'react-bootstrap-icons';
-import { updateQuantity, removeFromCart, clearCart } from '../redux/slices/cartSlice';
-import { removeCartItem, updateCartItemQuantity, markCartItemsAsOrdered } from '../redux/services/cartAPI';
-import { addOrder } from '../redux/services/orderAPI';
-import { showNotification } from '../components/Notification';
-import PaymentModal from '../components/PaymentModal';
+import React, { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { Container, Row, Col, Card, Button, Image } from "react-bootstrap";
+import { useHistory } from "react-router-dom";
+import { Plus, Dash } from "react-bootstrap-icons";
+import {
+  updateQuantity,
+  removeFromCart,
+  clearCart,
+} from "../redux/slices/cartSlice";
+import {
+  removeCartItem,
+  updateCartItemQuantity,
+  markCartItemsAsOrdered,
+} from "../redux/services/cartAPI";
+import { addOrder } from "../redux/services/orderAPI";
+import { showNotification } from "../components/Notification";
+import PaymentModal from "../components/PaymentModal";
 import { Box, IconButton, Typography } from "@mui/material";
 import { ArrowLeft } from "lucide-react";
+import { updateProductStock } from '../redux/services/inventoryAPI'; 
+import { updateProduct } from "../redux/slices/productSlice"
 
-const EMPTY_CART_MESSAGE = 'Your cart is empty.';
-const BACK_TO_PRODUCTS_TEXT = 'Back to Products';
-const CART_TITLE = 'Cart';
-const PRICE_LABEL = 'Price: $';
-const SUBTOTAL_LABEL = 'Subtotal: $';
-const TOTAL_LABEL = 'Total: $';
-const PROCEED_TO_CHECKOUT_TEXT = 'Proceed to Checkout';
-const ORDER_SUCCESS = 'Order placed successfully';
-const ORDER_FAILURE = 'Failed to place order';
+const EMPTY_CART_MESSAGE = "Your cart is empty.";
+const BACK_TO_PRODUCTS_TEXT = "Back to Products";
+const CART_TITLE = "Cart";
+const PRICE_LABEL = "Price: $";
+const SUBTOTAL_LABEL = "Subtotal: $";
+const TOTAL_LABEL = "Total: $";
+const PROCEED_TO_CHECKOUT_TEXT = "Proceed to Checkout";
+const ORDER_SUCCESS = "Order placed successfully";
+const ORDER_FAILURE = "Failed to place order";
 
 function CartPage() {
   const history = useHistory();
@@ -30,22 +40,26 @@ function CartPage() {
   const productList = useSelector((state) => state.products.products);
   const userId = useSelector((state) => state.user.profile?._id);
 
-  const mergedCart = cartItems.map(item => {
-    const product = productList.find(p => p._id === item.productId);
+  const mergedCart = cartItems.map((item) => {
+    const product = productList.find((p) => p._id === item.productId);
     return {
       ...item,
-      name: product?.name || 'Unnamed Product',
+      name: product?.name || "Unnamed Product",
       price: product?.price || 0,
-      image: product?.images?.[0]?.url || '',
+      image: product?.images?.[0]?.url || "",
     };
   });
 
   const handleIncrease = async (productId) => {
-    const item = cartItems.find(i => i.productId === productId);
+    const item = cartItems.find((i) => i.productId === productId);
     if (item && userId) {
       const newQuantity = item.quantity + 1;
       try {
-        await updateCartItemQuantity({ userId, productId, quantity: newQuantity });
+        await updateCartItemQuantity({
+          userId,
+          productId,
+          quantity: newQuantity,
+        });
         dispatch(updateQuantity({ productId, quantity: newQuantity }));
       } catch (error) {
         console.error(error);
@@ -54,7 +68,7 @@ function CartPage() {
   };
 
   const handleDecrease = async (productId) => {
-    const item = cartItems.find(i => i.productId === productId);
+    const item = cartItems.find((i) => i.productId === productId);
     if (!item || !userId) return;
 
     if (item.quantity === 1) {
@@ -67,7 +81,11 @@ function CartPage() {
     } else {
       const newQuantity = item.quantity - 1;
       try {
-        await updateCartItemQuantity({ userId, productId, quantity: newQuantity });
+        await updateCartItemQuantity({
+          userId,
+          productId,
+          quantity: newQuantity,
+        });
         dispatch(updateQuantity({ productId, quantity: newQuantity }));
       } catch (error) {
         console.error(error);
@@ -83,7 +101,7 @@ function CartPage() {
   const handleConfirmPayment = async ({ paymentMode, shippingAddress }) => {
     const orderData = {
       userId,
-      products: mergedCart.map(item => ({
+      products: mergedCart.map((item) => ({
         productId: item.productId,
         name: item.name,
         price: item.price,
@@ -95,16 +113,28 @@ function CartPage() {
       paymentMode,
       shippingAddress,
     };
-
     try {
       await addOrder(orderData);
-      const cartIds = cartItems.map(item => item._id);
+      for (const item of mergedCart) {
+        const currentStock = item.stockCount || 0;
+        const newStockCount = Math.max(0, currentStock - item.quantity); 
+      
+        await updateProductStock({
+          productId: item.productId,
+          stockCount: newStockCount,
+          updatedBy: userId,
+        });
+      
+        dispatch(updateProduct({ ...item, stockCount: newStockCount }));
+      }
+      
+      const cartIds = cartItems.map((item) => item._id);
       await markCartItemsAsOrdered(cartIds);
 
       showNotification(ORDER_SUCCESS, "success");
       setShowPaymentModal(false);
       dispatch(clearCart());
-      history.push('/orders');
+      history.push("/orders");
     } catch (error) {
       console.error(error);
       showNotification(ORDER_FAILURE, "error");
@@ -132,7 +162,7 @@ function CartPage() {
       {mergedCart.length === 0 ? (
         <>
           <p className="text-center">{EMPTY_CART_MESSAGE}</p>
-          <Button variant="outline-secondary" onClick={() => history.push('/')}>
+          <Button variant="outline-secondary" onClick={() => history.push("/")}>
             {BACK_TO_PRODUCTS_TEXT}
           </Button>
         </>
@@ -149,7 +179,7 @@ function CartPage() {
                         alt={item.name}
                         fluid
                         rounded
-                        style={{ maxHeight: '160px', objectFit: 'contain' }}
+                        style={{ maxHeight: "160px", objectFit: "contain" }}
                       />
                     )}
                   </Col>
@@ -199,7 +229,7 @@ function CartPage() {
               </Button>
               <Button
                 variant="outline-secondary"
-                onClick={() => history.push('/')}
+                onClick={() => history.push("/")}
               >
                 {BACK_TO_PRODUCTS_TEXT}
               </Button>

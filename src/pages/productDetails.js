@@ -29,6 +29,8 @@ import {
 import { getCartItems } from "../redux/services/cartAPI";
 import { addOrder } from "../redux/services/orderAPI";
 import { fetchReviews } from "../redux/services/reviewAPI";
+import { updateProductStock } from '../redux/services/inventoryAPI'; 
+import { updateProduct } from "../redux/slices/productSlice"
 
 const BUY_NOW = "Buy Now";
 const ADD_TO_CART = "Add to Cart";
@@ -191,6 +193,14 @@ const ProductPage = () => {
     };
     try {
       await addOrder(orderData);
+      debugger
+      const newStockCount = (product.stock || 0) - 1;
+      await updateProductStock({
+        productId: product._id,
+        stockCount: newStockCount,
+        updatedBy: userId,
+      });
+      dispatch(updateProduct({ ...product, stockCount: newStockCount }));
       showNotification("Order placed successfully", "success");
       setShowPaymentModal(false);
       history.push("/orders");
