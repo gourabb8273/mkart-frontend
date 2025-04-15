@@ -101,7 +101,7 @@ const SellerInfo = () => {
     </Container>
   );
 };
-const ProductPage = () => {
+const ProductDetailsPage = () => {
   const { id } = useParams();
   const history = useHistory();
   const dispatch = useDispatch();
@@ -404,4 +404,4 @@ const ProductPage = () => {
   );
 };
 
-export default ProductPage;
+export default ProductDetailsPage;
