@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setProducts, setError, setStatus } from "../redux/slices/productSlice";
 import { setCartItems } from "../redux/slices/cartSlice";
 import axios from "axios";
-import ProductCard from "../components/ProductCard";
+import ProductCard from "../components/ProductInfoCard";
 import { getWatchlistData } from "../redux/services/watchlistAPI";
 import { getCartItems } from "../redux/services/cartAPI";
 import { useHistory } from "react-router-dom";

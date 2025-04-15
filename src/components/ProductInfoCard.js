@@ -23,7 +23,7 @@ import { addItemToCart } from "../redux/services/cartAPI";
 
 const API_BASE_URL = process.env.REACT_APP_USER_SERVICE_API_BASE_URL;
 
-const ProductCard = ({ product }) => {
+const ProductInfoCard = ({ product }) => {
   const history = useHistory();
   const dispatch = useDispatch();
   const profile = useSelector((state) => state.user.profile) || {};
@@ -337,4 +337,4 @@ const ProductCard = ({ product }) => {
   );
 };
 
-export default ProductCard;
+export default ProductInfoCard;
