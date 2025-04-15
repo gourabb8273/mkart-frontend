@@ -19,7 +19,7 @@ import { Box, IconButton, Typography } from "@mui/material";
 import { ArrowLeft } from "lucide-react";
 import ProductReviewSection from "../components/ProductReviewSection";
 import PaymentModal from "../components/PaymentModal";
-import { showNotification } from "../components/Notification";
+import { showNotification } from "../components/NotificationMessage";
 import { addItemToCart } from "../redux/services/cartAPI";
 import {
   addToCart,

@@ -1,4 +1,4 @@
-import { showNotification } from "../../components/Notification";
+import { showNotification } from "../../components/NotificationMessage";
 import {
   setUserProfile,
   setUser,

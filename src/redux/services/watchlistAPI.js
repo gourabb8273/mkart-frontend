@@ -1,4 +1,4 @@
-import { showNotification } from "../../components/Notification";
+import { showNotification } from "../../components/NotificationMessage";
 import axios from "axios";
 import {
   setWatchlist,

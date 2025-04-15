@@ -14,7 +14,7 @@ import {
   markCartItemsAsOrdered,
 } from "../redux/services/cartAPI";
 import { addOrder } from "../redux/services/orderAPI";
-import { showNotification } from "../components/Notification";
+import { showNotification } from "../components/NotificationMessage";
 import PaymentModal from "../components/PaymentModal";
 import { Box, IconButton, Typography } from "@mui/material";
 import { ArrowLeft } from "lucide-react";

@@ -18,7 +18,7 @@ import {
   setWatchlistError,
 } from "../redux/slices/userSlice";
 import { addToCart, updateQuantity } from "../redux/slices/cartSlice";
-import { showNotification } from "./Notification";
+import { showNotification } from "./NotificationMessage";
 import { addItemToCart } from "../redux/services/cartAPI";
 
 const API_BASE_URL = process.env.REACT_APP_USER_SERVICE_API_BASE_URL;
