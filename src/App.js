@@ -53,7 +53,7 @@ function App() {
     e.preventDefault();
     setShowModal(false);
   };
-
+  
   const purgeUserPersistedState = () => {
     const persistState = localStorage.getItem("persist:root");
     if (persistState) {
