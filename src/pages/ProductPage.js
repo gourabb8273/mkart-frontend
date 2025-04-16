@@ -81,7 +81,7 @@ function ProductPage() {
         if (selectedCategory !== ALL)
           queryParams.push(`category=${selectedCategory}`);
         if (searchTerm.trim())
-          queryParams.push(`search=${encodeURIComponent(searchTerm.trim())}`);
+          queryParams.push(`query=${encodeURIComponent(searchTerm.trim())}`);
         const url = `${API_BASE_URL}/search${
           queryParams.length ? `?${queryParams.join("&")}` : ""
         }`;
