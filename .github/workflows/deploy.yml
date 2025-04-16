@@ -54,7 +54,9 @@ jobs:
 
       - name: Zip build folder
         run: |
-            zip -r artifact.zip ./build
+            cd build
+            zip -r ../artifact.zip .
+            cd ..
 
       - name: Create Amplify Deployment
         id: amplify_deploy
