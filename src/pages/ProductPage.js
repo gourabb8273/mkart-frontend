@@ -10,7 +10,7 @@ import { getWatchlistData } from "../redux/services/watchlistAPI";
 import { getCartItems } from "../redux/services/cartAPI";
 import { useHistory } from "react-router-dom";
 
-const API_BASE_URL = process.env.REACT_APP_PRODUCT_CATELOG_API_BASE_URL;
+const API_BASE_URL = process.env.REACT_APP_PRODUCT_SEARCH_API_BASE_URL;
 
 const SEARCH_PLACEHOLDER = "Search products...";
 const CATEGORY_ALL = "All Categories";

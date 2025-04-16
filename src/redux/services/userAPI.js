@@ -49,8 +49,12 @@ export const saveUserData = (userDetails) => async (dispatch) => {
 export const updateUserData = (profileData) => async (dispatch) => {
   dispatch(setStatus("loading"));
   try {
-    await axios.patch(`${API_BASE_URL}/users/update`, profileData);    
-    dispatch(setUserProfile(profileData));
+    const res = await axios.patch(`${API_BASE_URL}/users/update`, profileData);    
+    const updatedProfile = { 
+      ...profileData, 
+      _id: res?.data?.data?._id ?? profileData._id
+    };    
+    dispatch(setUserProfile(updatedProfile));
     dispatch(setStatus("succeeded"));
     showNotification("User profile updated successfully!", "success");
   } catch (error) {

@@ -193,7 +193,6 @@ const ProductDetailsPage = () => {
     };
     try {
       await addOrder(orderData);
-      debugger
       const newStockCount = (product.stock || 0) - 1;
       await updateProductStock({
         productId: product._id,
