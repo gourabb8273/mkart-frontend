@@ -68,6 +68,7 @@ function App() {
     purgeUserPersistedState();
     localStorage.clear();
     logout({ returnTo: window.location.origin });
+    
   };
 
   return (
