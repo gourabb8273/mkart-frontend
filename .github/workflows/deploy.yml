@@ -41,15 +41,40 @@ jobs:
           AWS_REGION: ${{ secrets.AWS_REGION }}
           SOURCE_DIR: build
 
+      - name: Download build folder from S3
+        run: |
+            aws s3 sync s3://${{ secrets.S3_BUCKET_NAME }}/build ./build
+
+      - name: Zip build folder
+        run: |
+            zip -r artifact.zip ./build
+
+      - name: Create Amplify Deployment
+        id: amplify_deploy
+        run: |
+            response=$(aws amplify create-deployment \
+              --region ap-south-1 \
+              --app-id ${{ secrets.AMPLIFY_APP_ID }} \
+              --branch-name staging)
+            
+            echo "$response"
+            echo "zip_url=$(echo $response | jq -r '.zipUploadUrl')" >> $GITHUB_OUTPUT
+            echo "job_id=$(echo $response | jq -r '.jobId')" >> $GITHUB_OUTPUT
+
+      - name: Upload to Amplify Zip URL
+        run: |
+            curl -T artifact.zip "${{ steps.amplify_deploy.outputs.zip_url }}"
+
       - name: Trigger Amplify Deployment
         run: |
-          aws amplify start-job \
-            --region ap-south-1 \
-            --app-id ${{ secrets.AMPLIFY_APP_ID }} \
-            --branch-name ${{ secrets.AMPLIFY_BRANCH_NAME }} \
-            --job-type RELEASE \
-            --job-reason "Triggered by GitHub Actions after S3 sync"
+            aws amplify start-deployment \
+              --region ap-south-1 \
+              --app-id ${{ secrets.AMPLIFY_APP_ID }} \
+              --branch-name staging \
+              --job-id ${{ steps.amplify_deploy.outputs.job_id }} \
+              --job-reason "Triggered by GitHub Actions from S3 build"
+
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: ${{ secrets.AWS_REGION }}
+          AWS_REGION: ap-south-1
