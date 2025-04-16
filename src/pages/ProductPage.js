@@ -82,7 +82,7 @@ function ProductPage() {
           queryParams.push(`category=${selectedCategory}`);
         if (searchTerm.trim())
           queryParams.push(`search=${encodeURIComponent(searchTerm.trim())}`);
-        const url = `${API_BASE_URL}/products${
+        const url = `${API_BASE_URL}/search${
           queryParams.length ? `?${queryParams.join("&")}` : ""
         }`;
         const response = await axios.get(url);
