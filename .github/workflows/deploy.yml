@@ -21,6 +21,18 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Generate .env.production file
+        run: |
+          cat <<EOF > .env.production
+          REACT_APP_AUTH0_DOMAIN=${{ secrets.REACT_APP_AUTH0_DOMAIN }}
+          REACT_APP_AUTH0_CLIENT_ID=${{ secrets.REACT_APP_AUTH0_CLIENT_ID }}
+          REACT_APP_PRODUCT_CATELOG_API_BASE_URL=${{ secrets.BACKEND_ENDPOINT }}
+          REACT_APP_USER_SERVICE_API_BASE_URL=${{ secrets.BACKEND_ENDPOINT }}
+          REACT_APP_PRODUCT_INVENTORY_API_BASE_URL=${{ secrets.BACKEND_ENDPOINT }}
+          REACT_APP_PRODUCT_CART_API_BASE_URL=${{ secrets.BACKEND_ENDPOINT }}
+          REACT_APP_PRODUCT_ORDER_API_BASE_URL=${{ secrets.BACKEND_ENDPOINT }}
+          EOF
+
       - name: Build React App
         run: |
           echo "REACT_APP_AUTH0_DOMAIN=$REACT_APP_AUTH0_DOMAIN" >> .env.production
