@@ -44,7 +44,7 @@ jobs:
       - name: Trigger Amplify Deployment
         run: |
           aws amplify start-job \
-            --region ${{ secrets.AWS_REGION }} \
+            --region "$AWS_REGION" \
             --app-id ${{ secrets.AMPLIFY_APP_ID }} \
             --branch-name ${{ secrets.AMPLIFY_BRANCH_NAME }} \
             --job-type RELEASE \
