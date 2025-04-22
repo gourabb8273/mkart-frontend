@@ -74,9 +74,7 @@ const ProductInfoCard = ({ product }) => {
   };
 
   const handleCardClick = () => {
-    if (product.stock > 0) {
       history.push(`/product/${product._id}`);
-    }
   };
 
   const handleAddToCart = async (e) => {
@@ -127,7 +125,7 @@ const ProductInfoCard = ({ product }) => {
             borderRadius: "8px",
             overflow: "hidden",
             boxShadow: "0 1px 3px rgba(0,0,0,0.08)",
-            cursor: product.stock > 0 ? "pointer" : "not-allowed",
+            // cursor: product.stock > 0 ? "pointer" : "not-allowed",
           }}
         >
           <div
