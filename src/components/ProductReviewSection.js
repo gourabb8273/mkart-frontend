@@ -16,7 +16,7 @@ const TEXTS = {
   errorSubmittingReview: "Error submitting review:",
 };
 
-const ProductReviewSection = () => {
+const ProductReviewSection = ({  onSummaryUpdate }) => {
   const { id: productId } = useParams();
   const profile = useSelector((state) => state.user.profile);
 
@@ -24,6 +24,18 @@ const ProductReviewSection = () => {
   const [loading, setLoading] = useState(true);
   const [reviewText, setReviewText] = useState("");
   const [rating, setRating] = useState(0);
+
+  const emitSummary = (reviewList) => {
+    const count = reviewList.length;
+    const sum = reviewList.reduce((acc, r) => acc + r.rating, 0);
+    const average = count > 0 ? parseFloat((sum / count).toFixed(1)) : 0;
+    onSummaryUpdate && onSummaryUpdate({ average, count });
+  };
+
+  useEffect(() => {
+    emitSummary(reviews);
+  }, [reviews]);
+
 
   useEffect(() => {
     const fetchProductReviews = async () => {

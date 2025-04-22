@@ -40,6 +40,7 @@ const IN_CART = "In Cart";
 const SellerInfo = () => {
   const [showDeliveryDate, setShowDeliveryDate] = useState(false);
   const [pincode, setPincode] = useState('');
+  
 
   const handleCheck = () => {
     if (pincode.length === 6) {
