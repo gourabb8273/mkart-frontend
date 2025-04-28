@@ -3,7 +3,7 @@ import { Navbar, Nav, Container, Dropdown } from 'react-bootstrap';
 import { FaUserCircle } from 'react-icons/fa';
 import LoginBtn from './LoginBtn';
 
-const BRAND_NAME = "Mkart";
+const BRAND_NAME = "Mkart NAGP Demo";
 const PROFILE_ICON_SIZE = 25;
 const MENU_ITEMS = {
   PROFILE: "My Profile",
